@@ -623,29 +623,29 @@ void SpaceGameSimulation::drawScreenSaver( float dt ) {
 
 	Vector3 increm;
 	increm.copy( &screenSaverDirection );
-	increm.multiplyScalar( dt * 2 );
+	increm.multiplyScalar( dt * 80 );
 	screenSaverPos.x += increm.x;
 	screenSaverPos.y += increm.y;
 
 	//rdpq_text_printf(NULL, 1, 20,20 , "screenSaverPos: %.2f, %.2f", screenSaverPos.x, screenSaverPos.y);
 	//rdpq_text_printf(NULL, 1, 20,30 , "dt: %.2f", dt);
 
-	float lx = 4;
-	float ly = 4;
+	float lx = 640;
+	float ly = 480;
 
-	if ( screenSaverPos.x < - lx - 4) {
+	if ( screenSaverPos.x < 0) {
 		screenSaverDirection.x = 1;
-		screenSaverPos.x = - lx - 4;
+		screenSaverPos.x = 0;
 	}
 
-	if ( screenSaverPos.y < - ly ) {
+	if ( screenSaverPos.y < 0 ) {
 		screenSaverDirection.y = 1;
-		screenSaverPos.y = - ly;
+		screenSaverPos.y = 0;
 	}
 
-	if ( screenSaverPos.x > lx ) {
+	if ( screenSaverPos.x > lx - 200) {
 		screenSaverDirection.x = -1;
-		screenSaverPos.x = lx;
+		screenSaverPos.x = lx- 200 ;
 	}
 	if ( screenSaverPos.y > ly ) {
 		screenSaverDirection.y = -1;
