@@ -28,7 +28,7 @@ Grid::Grid() :
 	color( 0, 1, 0 ),
 	squareLength( 40.0 ),
 	squareLineWidth( 2.0 ),
-	zViewDistance( 1500 ) {
+	zViewDistance( 500 ) {
 }
 
 Grid::~Grid(){
@@ -53,6 +53,7 @@ void Grid::setupRender( Camera *camera ) {
 
 	if ( material ) material->beginUse();
 
+	glDisable(GL_DEPTH_TEST);
 	glDisable( GL_CULL_FACE );
 
 }
@@ -60,7 +61,7 @@ void Grid::setupRender( Camera *camera ) {
 void Grid::finishRender() {
 
 	glEnable( GL_CULL_FACE );
-
+	glEnable(GL_DEPTH_TEST);
 	if ( material ) material->endUse();
 
 	glPopMatrix();
@@ -72,7 +73,7 @@ void Grid::drawGrid( Camera *camera, float yCoordinate, GraphicsColor *color ) {
 	Vector3 offset;
 	if ( pose ) {
 		Vector3 traslation = pose->matrix.getTraslation();
-		float i1, i2;
+		double i1, i2;
 		yCoordinate -= traslation.y;
 		offset.set( modf( - traslation.x / squareLength, &i1 ), 0.0, modf( - traslation.z / squareLength, &i2 ) )->multiplyScalar( squareLength );
 	}

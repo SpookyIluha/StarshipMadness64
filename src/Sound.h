@@ -23,9 +23,7 @@
 #include <vector>
 #include <map>
 
-#include <dc/sound/sound.h>
-#include <dc/sound/sfxmgr.h>
-#include <dc/sound/stream.h>
+#include <libdragon.h>
 
 namespace ceres {
 
@@ -43,10 +41,11 @@ public:
 	virtual bool playMusic( std::string path );
 	virtual bool stopMusic();
 
-	std::map<std::string, sfxhnd_t> audios;
+	std::map<std::string, wav64_t*> audios;
 
 	bool playingMusic;
-	snd_stream_hnd_t musicTrack;
+	wav64_t musicTrack;
+	int channel = 0;
 
 	bool audioEnabled;
 	bool musicEnabled;

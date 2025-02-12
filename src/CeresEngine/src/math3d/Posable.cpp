@@ -27,6 +27,6 @@ Posable::Posable():
 
 Posable::~Posable() {
 
-//	delete pose;
+	delete pose;
 
 }

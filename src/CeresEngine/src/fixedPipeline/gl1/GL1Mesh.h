@@ -23,6 +23,7 @@
 #include "math3d/Mesh.h"
 
 #include <GL/gl.h>
+#include <libdragon.h>
 
 namespace ceres {
 
@@ -39,6 +40,7 @@ public:
 	virtual void render( Camera *camera ) override;
 
 	int32_t currentVertexCount;
+
 
 private:
 

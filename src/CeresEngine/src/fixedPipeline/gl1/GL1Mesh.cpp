@@ -28,6 +28,10 @@ GL1Mesh::GL1Mesh():
 }
 
 GL1Mesh::~GL1Mesh() {
+	rspq_wait();
+	if(this->mesh->block != nullptr)
+		rspq_block_free(this->mesh->block);
+	this->mesh->block = nullptr;
 }
 
 bool GL1Mesh::init( Mesh *mesh, FPMaterial *material ) {
@@ -40,6 +44,8 @@ bool GL1Mesh::init( Mesh *mesh, FPMaterial *material ) {
 
 	normalAttribute = mesh->getAttribute( "normal" );
 	uvAttribute = mesh->getAttribute( "uv" );
+
+	this->mesh->block = NULL;
 
 	return true;
 }
@@ -70,8 +76,12 @@ void GL1Mesh::render( Camera *camera ) {
 
 	// Draw the primitives
 
-	if ( mesh->isIndexed() ) glDrawElements( glPrimitives[ mesh->primitive ], currentVertexCount, GL_UNSIGNED_INT, mesh->indices );
-	else glDrawArrays( glPrimitives[ mesh->primitive ], 0, currentVertexCount );
+	if(!this->mesh->block){
+		rspq_block_begin();
+		if ( mesh->isIndexed() ) glDrawElements( glPrimitives[ mesh->primitive ], currentVertexCount, GL_UNSIGNED_INT, mesh->indices );
+		else glDrawArrays( glPrimitives[ mesh->primitive ], 0, currentVertexCount );
+		this->mesh->block = rspq_block_end();
+	} 	rspq_block_run(this->mesh->block);
 
 	finishRender();
 

@@ -20,7 +20,7 @@
 #pragma once
 
 #include <string>
-#include <dc/maple/controller.h>
+//#include <dc/maple/controller.h>
 #include "game/Actuator.h"
 #include "SpaceshipActuator.h"
 #include "fixedPipeline/gl1/GL1Mesh.h"

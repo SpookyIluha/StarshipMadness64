@@ -42,8 +42,11 @@ GL1Mesh *GL1ObjectUtils::createObject(
 	float scale,
 	bool smoothNormals ) {
 
+	
+
 	STLMeshImporter stlImporter;
-	Mesh *mesh = stlImporter.loadMesh( modelPath.c_str(), scale );
+	
+	Mesh *mesh = loadSTLMESH( modelPath.c_str(), scale );
 	if ( ! mesh ) {
 		error = "Could not load mesh " + modelPath;
 		return NULL;
@@ -51,7 +54,7 @@ GL1Mesh *GL1ObjectUtils::createObject(
 
 	if ( smoothNormals ) {
 		Mesh *mergedMesh = mesh->mergeVertices();
-		delete mesh;
+		//delete mesh;
 		mesh = mergedMesh;
 		mesh->computeVertexNormals();
 	}

@@ -22,6 +22,7 @@
 #include "math3d/Posable.h"
 #include "math3d/Camera.h"
 #include "math3d/Mesh.h"
+#include <libdragon.h>
 
 namespace ceres {
 

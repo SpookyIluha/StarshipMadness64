@@ -49,12 +49,14 @@ bool EnemyActuator::init( float dt, float time, std::string &error ) {
 		default:
 			break;
 	}
-	enemyMaterial->specular.set( 0.0, 0.0, 0.0 );
+	enemyMaterial->minZ = 15;
+	enemyMaterial->maxZ = 500;
+	//enemyMaterial->specular.set( 0.0, 0.0, 0.0 );
 
 	GL1ObjectUtils objectUtils;
 	Vector3 enemyPos;
 	enemyObject = objectUtils.createObject(
-		SPACESHIP_MADNESS_DIR + std::string( "models/enemy" ) + std::to_string( enemyType ) + std::string( "/enemy" ) + std::to_string( enemyType ) + std::string( ".stl" ),
+		SPACESHIP_MADNESS_DIR + std::string( "stls" ) + std::string( "/enemy" ) + std::to_string( enemyType ) + std::string( ".stl" ),
 		enemyMaterial,
 		enemyType == 1 ? 25.0 : 10,
 		&enemyPos,
@@ -240,7 +242,7 @@ void EnemyActuator::receiveHit( float amount, float dt, float time ) {
 			name = "x";
 
 			enemyObject->material->diffuse.set( 0.4, 0.2, 0.15 );
-			enemyObject->material->doubleSided = true;
+			enemyObject->material->doubleSided = false;
 
 			if ( ! ((SpaceGamePhase *)game)->sound->playAudio( std::string( "explosion" ) ) ) {
 				println( "Could not play explosion" );

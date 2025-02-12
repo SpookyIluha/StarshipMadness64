@@ -30,6 +30,10 @@
 using namespace ceres;
 
 InstructionsPhase::InstructionsPhase() : SpaceGamePhase() {
+	camera = NULL;
+	scenes[0] = NULL;
+	scenes[1] = NULL;
+	scenes[2] = NULL;
 }
 
 InstructionsPhase::~InstructionsPhase() {
@@ -89,13 +93,14 @@ bool InstructionsPhase::initPhase( std::string &error ) {
 	textMaterial->texture = font1->texture;
 	textMaterial->transparent = true;
 	textMaterial->opacity = 1.0;
+	textMaterial->depthTest = false;
 
 	GL1Text3D* text = new GL1Text3D();
 	text->pose = new Pose();
-	text->pose->position.set( -6, 3.5, - 8 );
+	text->pose->position.set( 20, 60, - 8 );
 	text->pose->updateMatrix();
 	text->init( font1, textMaterial, Vector3( 0.5, 0.5, 1 ) );
-	text->setString( "Ship controls\n\nAccelerate: Right trigger\nGo backwards: Left trigger\nPitch, yaw: Main Stick\nRoll: X, Y\nStabilize: B\nLaser: A\n\n\n\n\n\n\n\n\n                                                   1/3" );
+	text->setString( "Ship controls\n\nAccelerate:      D-Up C-Up\nGo backwards:      D-Down C-Down\nPitch, yaw:      Main Stick\nRoll:      D-Left C-Left, D-Right C-Right\nStabilize:      L R Triggers\nLaser:      Z Trigger\n\n\n\n\n                                                  1/3" );
 	scene0->objects.push_back( text );
 
 	// *************************************************************
@@ -109,20 +114,20 @@ bool InstructionsPhase::initPhase( std::string &error ) {
 
 	light2->enabled = true;
 	light2->isSpot = false;
-	light2->position.set( 0.0, 0.0, 0.0 );
+	light2->position.set( 0.0, 0.0, 1.0 );
 	light2->ambient.set( 0, 0, 0 );
 	light2->diffuse.set( 1, 1, 1 );
-	light2->specular.set( 0.1, 0.1, 0.1 );
+	//light2->specular.set( 0.1, 0.1, 0.1 );
 	light2->updateParams();
 
 	// Text
 
 	GL1Text3D *text2 = new GL1Text3D();
 	text2->pose = new Pose();
-	text2->pose->position.set( -6, 3.5, - 8 );
+	text2->pose->position.set( 20, 60, - 8 );
 	text2->pose->updateMatrix();
 	text2->init( font1, textMaterial, Vector3( 0.5, 0.5, 1 ) );
-	text2->setString( "Get Power-ups!!\n\n\nMax shield powerup\n\n\nRegenerate shield powerup\n\n\nMax energy powerup\n\n\nRegenerate energy powerup\n\n\n\n                                                   2/3" );
+	text2->setString( "Get Power-ups!!\n\n\nMax shield powerup\n\nRegenerate shield powerup\n\nMax energy powerup\n\nRegenerate energy powerup\n\n\n                                                  2/3" );
 	scene2->objects.push_back( text2 );
 
 	// Powerups
@@ -160,20 +165,20 @@ bool InstructionsPhase::initPhase( std::string &error ) {
 
 	light3->enabled = true;
 	light3->isSpot = false;
-	light3->position.set( 0.0, 0.0, 0.0 );
+	light3->position.set( 0.0, 0.0, 1.0 );
 	light3->ambient.set( 0, 0, 0 );
 	light3->diffuse.set( 1, 1, 1 );
-	light3->specular.set( 0.1, 0.1, 0.1 );
+	//light3->specular.set( 0.1, 0.1, 0.1 );
 	light3->updateParams();
 
 	// Text
 
 	GL1Text3D *text3 = new GL1Text3D();
 	text3->pose = new Pose();
-	text3->pose->position.set( -6, 3.5, - 8 );
+	text3->pose->position.set( 20, 60, - 8 );
 	text3->pose->updateMatrix();
 	text3->init( font1, textMaterial, Vector3( 0.5, 0.5, 1 ) );
-	text3->setString( "Defend your cyberplanet from the waves of\ninvader aliens.\n\nDestroy all enemies of each wave.\n\n\n\n\n\n\n\n\n\n\n\n\n                                                   3/3" );
+	text3->setString( "Defend your cyberplanet from the waves of\ninvader aliens.\n\nDestroy all enemies of each wave.\n\n\n\n\n\n\n\n\n                                                   3/3" );
 	scene3->objects.push_back( text3 );
 
 	EnemyActuator *enemy1 = new EnemyActuator();
@@ -212,9 +217,12 @@ bool InstructionsPhase::initPhase( std::string &error ) {
 }
 
 void InstructionsPhase::terminatePhase() {
-
-	delete camera;
-	for ( uint32 i = 0; i < NUM_SCENES; i ++ ) delete scenes[ i ];
+	if(camera != NULL)
+		delete camera;
+	for ( uint32_t i = 0; i < NUM_SCENES; i ++ ) {
+		if(scenes[ i ] != NULL)
+		delete scenes[ i ];
+	}
 
 }
 

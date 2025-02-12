@@ -21,28 +21,27 @@
 #include <inttypes.h>
 
 #include "time/time.h"
+#include <libdragon.h>
 
 namespace ceres {
 
-double getTime() {
 
-	struct timespec t;
+    double getTime() {
 
-	clock_gettime( CLOCK_MONOTONIC, &t );
-
-	return ( (double) t.tv_sec ) + ( ( double ) t.tv_nsec ) * 0.000000001;
-
-}
-
-void sleepNanos( int32_t nanos ) {
-
-	// max nanos: 1000000000 - 1
-
-    struct timespec t;
-    t.tv_sec = 0;
-    t.tv_nsec = nanos;
-    nanosleep( &t, NULL );
-
-}
+        //clock_gettime( CLOCK_MONOTONIC, &t );
+        double ticks = timer_ticks();
+    
+        //return ( (double) t.tv_sec ) + ( ( double ) t.tv_nsec ) * 0.000000001;
+        return TICKS_TO_MS(ticks) / 1000.0f;
+    }
+    
+    void sleepNanos( int32_t nanos ) {
+    
+        // max nanos: 1000000000 - 1
+        int32_t t = TICKS_FROM_US(nanos / 1000);
+        kthread_sleep(t);
+    
+    }
+    
 
 }

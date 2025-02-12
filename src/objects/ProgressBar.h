@@ -35,6 +35,7 @@ public:
 	virtual void finishRender() override;
 	virtual void render( Camera *camera ) override;
 
+	
 	Vector3 cornerNW, cornerSE;
 	float margin;
 

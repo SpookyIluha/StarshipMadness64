@@ -37,7 +37,7 @@ public:
 
 	void drawQuad( float *v, float *normal );
 
-	Vector3 beginPoint, ray;
+	Vector3 beginPoint, ray, rayvis;
 	float thickness;
 
 };

@@ -84,11 +84,13 @@ bool StartingPhase::initPhase( std::string &error ) {
 	titleMaterial->texture = font1->texture;
 	titleMaterial->transparent = true;
 	titleMaterial->opacity = 1.0;
+	titleMaterial->depthTest = false;
 
 	titleObject = new GL1Text3D();
 	titleObject->pose = new Pose();
-	titleObject->pose->position.set( - 7.77, - 1.5, 0 )->inc( &camera->pose->position );
+	titleObject->pose->position.set( 30, 280, 0 );//->inc( &camera->pose->position );
 	titleObject->pose->updateMatrix();
+	titleObject->pose->scale = true;
 	titleObject->init( font1, titleMaterial, Vector3( 1.75, 1.75, 1 ) );
 	titleObject->setString( "Starship Madness" );
 	scene->objects.push_back( titleObject );
@@ -106,22 +108,23 @@ bool StartingPhase::initPhase( std::string &error ) {
 	textMaterial->texture = font1->texture;
 	textMaterial->transparent = true;
 	textMaterial->opacity = 1.0;
+	textMaterial->depthTest = false;
 
 	text = new GL1Text3D();
 	text->pose = new Pose();
-	text->pose->position.set( 6, camera->pose->position.y - 2, - 8 );
+	text->pose->position.set( 150, 320, - 8 );
 	text->pose->updateMatrix();
-	text->init( font1, textMaterial, Vector3( 0.5, 0.5, 1 ) );
-	text->setString( "Concept, Code: yomboprime\nMusic: airsynth\nIdeas, motivation: Carles\n2024" );
+	text->init( font1, textMaterial, Vector3( 130, 300, 1 ) );
+	text->setString( "Concept, Code: yomboprime\nMusic: airsynth\nIdeas, motivation: Carles\nNintendo 64 Version\n2025" );
 	scene->objects.push_back( text );
 
 	// Press start text
 
 	text2 = new GL1Text3D();
 	text2->pose = new Pose();
-	text2->pose->position.set( 8.4, camera->pose->position.y - 4, - 8 );
+	text2->pose->position.set( 240, 450, - 8 );
 	text2->pose->updateMatrix();
-	text2->init( font1, textMaterial, Vector3( 0.5, 0.5, 1 ) );
+	text2->init( font1, textMaterial, Vector3( 220, 420, 1 ) );
 	text2->setString( "Press START" );
 	scene->objects.push_back( text2 );
 
@@ -154,10 +157,11 @@ void StartingPhase::timestep( float dt, float time ) {
 		textMaterial->texture = font1->texture;
 		textMaterial->transparent = true;
 		textMaterial->opacity = 1.0;
+		textMaterial->depthTest = false;
 
 		hiScoreText = new GL1Text3D();
 		hiScoreText->pose = new Pose();
-		hiScoreText->pose->position.set( 8.5, camera->pose->position.y + 4, - 8 );
+		hiScoreText->pose->position.set( 250, 37, - 8 );
 		hiScoreText->pose->updateMatrix();
 		hiScoreText->init( font1, textMaterial, Vector3( 0.5, 0.5, 1 ) );
 		hiScoreText->setString( "Hi-score: " + std::to_string( spaceshipActuator->parameters.hiScore ) );

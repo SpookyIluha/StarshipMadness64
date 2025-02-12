@@ -29,7 +29,8 @@ public:
 	GL1Material() {
 	}
 
-	virtual ~GL1Material() {}
+	virtual ~GL1Material() {
+	}
 
 	virtual void beginUse() override;
 	virtual void endUse() override;

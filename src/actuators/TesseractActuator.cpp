@@ -44,12 +44,14 @@ bool TesseractActuator::init( float dt, float time, std::string &error ) {
 
 	GL1Material *tesseractMaterial = new GL1Material();
 	tesseractMaterial->diffuse.set( 0.8, 0.8, 0.8 );
-	tesseractMaterial->specular.set( 0.0, 0.0, 0.0 );
+	//tesseractMaterial->specular.set( 0.0, 0.0, 0.0 );
 	tesseractMaterial->doubleSided = true;
+	tesseractMaterial->minZ = 15;
+	tesseractMaterial->maxZ = 500;
 
 	GL1Material *coreMaterial = new GL1Material();
 	coreMaterial->diffuse.set( 0, 0.5, 0.8 );
-	coreMaterial->specular.set( 0.0, 0.0, 0.0 );
+	//coreMaterial->specular.set( 0.0, 0.0, 0.0 );
 
 	tesseractObject = new Tesseract();
 	tesseractObject->material = tesseractMaterial;
@@ -62,7 +64,7 @@ bool TesseractActuator::init( float dt, float time, std::string &error ) {
 
 	GL1ObjectUtils objectUtils;
 	Vector3 corePos( 125, 125, 125 );
-	tesseractCoreObject = objectUtils.createObject( SPACESHIP_MADNESS_DIR + std::string( "models/enemy3/ball.stl" ), coreMaterial, 100, corePos, error, new GL1Mesh(), 250.0 );
+	tesseractCoreObject = objectUtils.createObject( SPACESHIP_MADNESS_DIR + std::string( "stls/ball.stl" ), coreMaterial, 100, corePos, error, new GL1Mesh(), 250.0 );
 	((Phase *)game)->scene->objects.push_back( tesseractCoreObject );
 
 	object = tesseractCoreObject;

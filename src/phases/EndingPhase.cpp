@@ -71,16 +71,16 @@ bool EndingPhase::initPhase( std::string &error ) {
 	GL1Material *bandMaterial = new GL1Material();
 	bandMaterial->illuminated = false;
 	bandMaterial->diffuse.set( 1, 1, 1 );
-	bandMaterial->specular.set( 0, 0, 0 );
+	//bandMaterial->specular.set( 0, 0, 0 );
 	bandMaterial->doubleSided = true;
 	bandMaterial->depthTest = false;
-	GL1Texture *bandTexture = GL1Pipeline::loadTexture( SPACESHIP_MADNESS_DIR + std::string( "textures/gradient1.png" ), error );
+	GL1Texture *bandTexture = GL1Pipeline::loadTexture( SPACESHIP_MADNESS_DIR + std::string( "textures/gradient1.sprite" ), error );
 	if ( bandTexture == NULL ) return NULL;
 	bandMaterial->texture = bandTexture;
 
 	Vector3 bandPosition( 0, 0, - 180 );
 	band = objectUtils.createPNCObject(
-		SPACESHIP_MADNESS_DIR + std::string( "models/charset/congrats.xyzuv" ),
+		SPACESHIP_MADNESS_DIR + std::string( "xyzuv/congrats.xyzuv" ),
 		bandMaterial,
 		10,
 		bandPosition,

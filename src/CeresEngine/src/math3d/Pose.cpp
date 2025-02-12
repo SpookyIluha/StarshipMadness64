@@ -18,19 +18,25 @@
  */
 
 #include "Pose.h"
+#include <libdragon.h>
 
 using namespace ceres;
 
 Pose::Pose() {
 	position = Vector3();
 	rotation = Quaternion();
-	this->matrix = Matrix4();
+	matrix = Matrix4();
+	scale = false;
 }
 
 Pose::~Pose() {}
 
+Vector3 two = Vector3(2,2,2);
+Vector3 one = Vector3(1,1,1);
+
 void Pose::updateMatrix() {
 
 	matrix.setRotationFromQuaternion( &rotation )->setTraslation( &position );
+	matrix.scale(scale? &two : &one);
 
 }

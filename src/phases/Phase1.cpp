@@ -79,13 +79,24 @@ bool Phase1::initPhase( std::string &error ) {
 	drawFloor = true;
 	floorGrid = new Grid();
 	floorGrid->pose = new Pose();
+	floorGrid->color.set( 0, 1, 0 );
+	zViewDistance = 650.0;
+	floorGrid->zViewDistance = zViewDistance;
+	floorGrid->squareLength = 90;
+	floorGrid->squareLineWidth = 5;
+
+	scene->objects = std::vector<ceres::Object3D *>();
 	scene->objects.push_back( floorGrid );
 
 	// Create buildings
 
 	GL1Material *boxMaterial = new GL1Material();
+
 	boxMaterial->diffuse.set( 0.7, 0.7, 0.7 );
-	boxMaterial->specular.set( 0.0, 0.0, 0.0 );
+	//boxMaterial->specular.set( 0.0, 0.0, 0.0 );
+	boxMaterial->texture = NULL;
+	boxMaterial->minZ = 15;
+	boxMaterial->maxZ = 800;
 
 	BoxCollisionable *boxCol = new BoxCollisionable();
 	collisionables[ "buildings" ] = boxCol;
@@ -93,9 +104,10 @@ bool Phase1::initPhase( std::string &error ) {
 	for ( int32_t i = 0, n = 50; i < n; i ++ ) {
 
 		GL1Parallelepiped *paralellepiped = new GL1Parallelepiped();
-		paralellepiped->pose->updateMatrix();
+		//paralellepiped->pose->updateMatrix();
 		paralellepiped->material = boxMaterial;
 		paralellepiped->radius = 20.0;
+		paralellepiped->material->texture = NULL;
 		Vector3 pos;
 		pos.set( ( frand() - 0.5 ) * citySize, 0, ( frand() - 0.5 ) * citySize );
 		Vector3 p0( - frand() * 40 - 10, 0, - frand() * 40 - 10 );
@@ -197,6 +209,7 @@ void Phase1::createEnemiesWave( int32_t wave, float time ) {
 	// Create enemies
 
 	//int32_t numEnemies =  1;
+
 	int32_t numEnemies =  6 + 2 * wave;
 	for ( int32_t i = 0; i < numEnemies; i ++ ) {
 		EnemyActuator *enemy1 = new EnemyActuator();

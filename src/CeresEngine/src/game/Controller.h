@@ -29,6 +29,7 @@ public:
 
 	float x1, y1, x2, y2, leftTrigger, rightTrigger;
 	bool a, b, c, d, up, down, left, right, start;
+	bool z, l, r;
 
 };
 

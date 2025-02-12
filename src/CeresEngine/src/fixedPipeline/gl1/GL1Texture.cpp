@@ -20,13 +20,14 @@
 #include "GL1Texture.h"
 
 #include <GL/gl.h>
-#include <GL/glext.h>
+//#include <GL/glext.h>
+#include <GL/gl_integration.h>
 
 using namespace ceres;
 
 GL1Texture::GL1Texture() :
 	FPTexture(),
-	target( 0 ),
+	target( GL_TEXTURE_2D ),
 	textureName( 0 ) {
 }
 
@@ -40,82 +41,77 @@ GL1Texture::~GL1Texture() {
 void GL1Texture::create( int32_t target ) {
 
 	this->target = target;
+	GLuint texname = 0;
+	glGenTextures( 1, &texname );
+	textureName = texname;
 
-	glGenTextures( 1, &textureName );
 	glBindTexture( target, textureName );
 
 }
 
-bool GL1Texture::init( int32_t resolutionX, int32_t resolutionY, int32_t numComponents, bool magLinearFilter, bool minLinearFilter, bool mipmap, void *data, std::string &error ) {
+bool GL1Texture::init( bool magLinearFilter, bool minLinearFilter, bool mipmap, sprite_t *data, std::string &error ) {
 
 	// data can be null (no data upload at this moment)
 
 	GLenum textureTarget = GL_TEXTURE_2D;
 
-	return initInternal( textureTarget, resolutionX, resolutionY, numComponents, magLinearFilter, minLinearFilter, mipmap, data, error );
+	return initInternal( textureTarget, magLinearFilter, minLinearFilter, mipmap, data, error );
 
 }
 
 bool GL1Texture::initInternal(
 	int32_t target,
-	int32_t resolutionX,
-	int32_t resolutionY,
-	int32_t numComponents,
 	bool magLinearFilter,
 	bool minLinearFilter,
 	bool mipmap,
-	void *data,
+	sprite_t *data,
 	std::string &error ) {
 
-	if ( resolutionX == 0 || resolutionY == 0 ) {
 
-		error = std::string( "GL1Texture::initInternal(): Error defining texture: Texture resolution is 0 in some dimension/s." );
+
+	if ( !data) {
+
+		error = std::string( "GL1Texture::initInternal(): Error the sprite_t data is NULL." );
 		return false;
 
 	}
 
-	if ( numComponents == 0 ) {
-
-		error = std::string( "GL1Texture::initInternal(): Error defining texture: numComponents is 0." );
-		return false;
-
-	}
-
-	if ( numComponents != 1 && numComponents != 3 && numComponents != 4 ) {
-
-		error = std::string( "GL1Texture::initInternal(): Error defining texture: numComponents must be 1, 3 or 4." );
-		return false;
-
-	}
-
+	target = GL_TEXTURE_2D;
 	create( target );
 
-	this->resolutionX = resolutionX;
-	this->resolutionY = resolutionY;
-	this->numComponents = numComponents;
+	surface_t surf = sprite_get_pixels(data);
+
+	this->resolutionX = surf.width;
+	this->resolutionY = surf.height;
+	this->numComponents = sprite_get_format(data);
 
 	this->magLinearFilter = magLinearFilter;
 	this->minLinearFilter = minLinearFilter;
-	this->hasMipmap = mipmap;
-
-	bufferSizeBytes = getPixelSizeBytes( numComponents ) * resolutionX * resolutionY;
+	this->hasMipmap = sprite_get_lod_count(data) > 1;
 
 	if ( data ) upload( data );
-	this->data = (float *)data;
+	this->data = data;
 
+	memset(&this->texparms, 0, sizeof(rdpq_texparms_t));
+	this->texparms.s.repeats = repeat? REPEAT_INFINITE : 1;
+	this->texparms.t.repeats = repeat? REPEAT_INFINITE : 1;
 	glTexParameteri( target, GL_TEXTURE_MAG_FILTER, magLinearFilter ? GL_LINEAR : GL_NEAREST );
 	glTexParameteri( target, GL_TEXTURE_MIN_FILTER, minLinearFilter ? GL_LINEAR : GL_NEAREST );
 
-	glTexParameteri( target, GL_TEXTURE_WRAP_S, repeat ? GL_REPEAT : GL_CLAMP_TO_EDGE );
-	glTexParameteri( target, GL_TEXTURE_WRAP_T, repeat ? GL_REPEAT : GL_CLAMP_TO_EDGE );
+	//glTexParameteri( target, GL_TEXTURE_WRAP_S, repeat ? GL_REPEAT : GL_CLAMP );
+	//glTexParameteri( target, GL_TEXTURE_WRAP_T, repeat ? GL_REPEAT : GL_CLAMP );
 
 	return true;
 
 }
 
-void GL1Texture::upload( void *src ) {
-
-	GLint internalFormat = 0;
+void GL1Texture::upload(  sprite_t *src ) {
+	surface_t surf = sprite_get_pixels(src);
+	rdpq_texparms_t parms = {0};
+	parms.s.repeats = REPEAT_INFINITE;
+	parms.t.repeats = REPEAT_INFINITE;
+	glSurfaceTexImageN64(GL_TEXTURE_2D, 0, &surf, &parms);
+	/*GLint internalFormat = 0;
 	GLenum inputFormat = 0;
 	switch ( numComponents ) {
 		case 1:
@@ -152,6 +148,6 @@ void GL1Texture::upload( void *src ) {
         // Currently REQUIRED for OpenGLdc w/PNGs on Dreamcast
 		if ( this->hasMipmap ) glGenerateMipmapEXT( GL_TEXTURE_2D );
 
-	}
+	}*/
 
 }

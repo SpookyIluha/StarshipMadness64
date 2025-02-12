@@ -19,5 +19,4 @@
 
 #pragma once
 
-#define SPACESHIP_MADNESS_DIR std::string( "/rd/StarshipMadness/" )
-//#define SPACESHIP_MADNESS_DIR std::string( "/cd/StarshipMadness/" )
+#define SPACESHIP_MADNESS_DIR std::string( "rom:/" )

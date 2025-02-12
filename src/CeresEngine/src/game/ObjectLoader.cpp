@@ -57,7 +57,7 @@ bool ObjectLoader::createY3DObject( Actuator *actuator, GL1Pipeline *pipeline, s
 
 	actuator->data = NULL;
 	actuator->object = NULL;
-	actuator->physicsObject = NULL;
+	//actuator->physicsObject = NULL;
 
 	// Load file into memory
 
@@ -291,15 +291,15 @@ bool ObjectLoader::createY3DObject( Actuator *actuator, GL1Pipeline *pipeline, s
 		material->ambient.set( 0.0, 0.0, 0.0 );
 		material->emission.set( 0.0, 0.0, 0.0 );
 		material->diffuse.set( object->diffuseColor.r, object->diffuseColor.g, object->diffuseColor.b );
-		material->specular.set( 0.0, 0.0, 0.0 );
-		material->specularExponent = 0.0;
+		//material->specular.set( 0.0, 0.0, 0.0 );
+		//material->specularExponent = 0.0;
 		material->illuminated = true;
 		material->doubleSided = false;
 		material->flatShading = false;
 		material->transparent = object->transparent;
 		material->opacity = object->opacity;
 		material->depthTest = true;
-		material->specularExponent = 0.0;
+		//material->specularExponent = 0.0;
 		//material->specularExponent = object->roughness;
 
 		if ( object->texturePath.length() > 0 ) {
@@ -320,7 +320,7 @@ bool ObjectLoader::createY3DObject( Actuator *actuator, GL1Pipeline *pipeline, s
 
 				delete group->pose;
 
-				//delete group;
+				delete group;
 
 				error = std::string( "Could not load texture: " ) + object->texturePath;
 				return false;

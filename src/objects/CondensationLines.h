@@ -37,7 +37,7 @@ public:
 
 	void drawQuad( float *v );
 
-	static const int32 NUM_TRAIL_POINTS = 2;
+	static const int32_t NUM_TRAIL_POINTS = 2;
 	Vector3 trailPoints[ NUM_TRAIL_POINTS ];
 
 	float thickness;

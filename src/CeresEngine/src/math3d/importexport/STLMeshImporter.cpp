@@ -22,6 +22,9 @@
 #include <stdio.h>
 #include <sys/stat.h>
 #include <inttypes.h>
+#include <libdragon.h>
+#include "utils/utils.h"
+
 
 using namespace ceres;
 
@@ -29,8 +32,7 @@ STLMeshImporter::STLMeshImporter() {}
 
 STLMeshImporter::~STLMeshImporter() {}
 
-Mesh *STLMeshImporter::loadMesh( const char *path, float scale ) {
-
+ceres::Mesh * loadSTLMESH(const char *path, float scale ) {
 	struct stat st;
     if ( stat( path, &st ) != 0 ) return NULL;
 	off_t length = st.st_size;
@@ -46,8 +48,9 @@ Mesh *STLMeshImporter::loadMesh( const char *path, float scale ) {
 		return NULL;
 	}
 
-	unsigned int numTriangles = 0;
+	uint32_t numTriangles = 0;
 	off_t read = fread( &numTriangles, 1, 4, f );
+	numTriangles = byteswap_uint32(numTriangles);
 	if ( read != 4 ) {
 		fclose( f );
 		return NULL;
@@ -86,6 +89,7 @@ Mesh *STLMeshImporter::loadMesh( const char *path, float scale ) {
 			delete [] buf;
 			return NULL;
 		}
+		for ( int n = 0; n < 3; n ++ ) normal[n] = byteswap_float(normal[n]);
 
 		for ( int v = 0; v < 3; v ++ ) {
 
@@ -94,6 +98,8 @@ Mesh *STLMeshImporter::loadMesh( const char *path, float scale ) {
 				delete [] buf;
 				return NULL;
 			}
+			for ( int np = 0; np < 3; np ++ ) pos[np] = byteswap_float(pos[np]);
+
 			*p ++ = pos[ 0 ] * scale;
 			*p ++ = pos[ 2 ] * scale;
 			*p ++ = - pos[ 1 ] * scale;
@@ -119,6 +125,7 @@ Mesh *STLMeshImporter::loadMesh( const char *path, float scale ) {
 
 	fclose( f );
 
+
 	Mesh *mesh = new Mesh();
 	mesh->numVertices = numTriangles * 3;
 	mesh->numIndices = 0;
@@ -130,4 +137,8 @@ Mesh *STLMeshImporter::loadMesh( const char *path, float scale ) {
 
 	return mesh;
 
+}
+
+Mesh* STLMeshImporter::loadMesh( const char *path, float scale ){
+	return loadMesh( path, scale );
 }

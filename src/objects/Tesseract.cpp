@@ -97,6 +97,8 @@ Tesseract::Tesseract() :
 }
 
 Tesseract::~Tesseract(){
+	if(block) rspq_block_free(block);
+	block = NULL;
 }
 
 void Tesseract::transformPoints() {
@@ -119,86 +121,90 @@ void Tesseract::render( Camera *camera ) {
 	if ( ! visible ) return;
 
 	setupRender( camera );
+	if(!block){
+		rspq_block_begin();
+		for ( int32_t j = 0, n = links.size(); j < n; j ++ ) {
 
-	for ( int32_t j = 0, n = links.size(); j < n; j ++ ) {
-
-		Link *link = &links[ j ];
-
-		Vector3 p0 = &rotatedPoints[ link->point0 ];
-		Vector3 p1 = &rotatedPoints[ link->point1 ];
-
-		int32_t numSides = 12;
-		float dAngle = 2.0 * M_PI / numSides;
-		float angle = 0;
-		Vector3 v0, v1, v2, v3;
-		for ( int32_t i =  0; i < numSides + 1; i ++ ) {
-
-			Vector3 dPos;
-			dPos.sub( &p1, &p0 )->normalize();
-			Vector3 normal;
-			normal.set( 1, 1, 1 );
-			Vector3 axisZ;
-			axisZ.crossProduct( &dPos, &normal );
-			if ( axisZ.length()  < 0.00001 ) {
-				normal.set( 1, 0, 0 );
+			Link *link = &links[ j ];
+	
+			Vector3 p0 = &rotatedPoints[ link->point0 ];
+			Vector3 p1 = &rotatedPoints[ link->point1 ];
+	
+			int32_t numSides = 12;
+			float dAngle = 2.0 * M_PI / numSides;
+			float angle = 0;
+			Vector3 v0, v1, v2, v3;
+			for ( int32_t i =  0; i < numSides + 1; i ++ ) {
+	
+				Vector3 dPos;
+				dPos.sub( &p1, &p0 )->normalize();
+				Vector3 normal;
+				normal.set( 1, 1, 1 );
+				Vector3 axisZ;
 				axisZ.crossProduct( &dPos, &normal );
+				if ( axisZ.length()  < 0.00001 ) {
+					normal.set( 1, 0, 0 );
+					axisZ.crossProduct( &dPos, &normal );
+				}
+				normal.crossProduct( &axisZ, &dPos );
+	
+				Vector3 vertPos;
+				vertPos.copy( &normal )->multiplyScalar( thickness * sin( angle ) );
+				Vector3 yAxis;
+				yAxis.copy( &axisZ )->multiplyScalar( thickness * cos( angle ) );
+				vertPos.inc( &yAxis );
+				Vector3 vertPos2;
+				Vector3 normalRadial;
+				normalRadial.copy( &vertPos )->normalize();
+				vertPos2.copy( &vertPos )->inc( &p0 );
+				vertPos.inc( &p1 );
+	
+				angle += dAngle;
+	
+				if ( i == 0 ) {
+					v0.copy( &vertPos );
+					v1.copy( &vertPos2 );
+					continue;
+				} else {
+					v2.copy( &vertPos );
+					v3.copy( &vertPos2 );
+				}
+	
+				float v[ 12 ];
+				float n[ 3 ];
+	
+				glBegin( GL_TRIANGLES );
+	
+				v[ 0 ] = v0.x;
+				v[ 1 ] = v0.y;
+				v[ 2 ] = v0.z;
+				v[ 3 ] = v1.x;
+				v[ 4 ] = v1.y;
+				v[ 5 ] = v1.z;
+				v[ 6 ] = v2.x;
+				v[ 7 ] = v2.y;
+				v[ 8 ] = v2.z;
+				v[ 9 ] = v3.x;
+				v[ 10 ] = v3.y;
+				v[ 11 ] = v3.z;
+	
+				n[ 0 ] = normalRadial.x;
+				n[ 1 ] = normalRadial.y;
+				n[ 2 ] = normalRadial.z;
+	
+				drawQuad( v, n );
+	
+				glEnd();
+	
+				v0.copy( &v2 );
+				v1.copy( &v3 );
+	
 			}
-			normal.crossProduct( &axisZ, &dPos );
-
-			Vector3 vertPos;
-			vertPos.copy( &normal )->multiplyScalar( thickness * sin( angle ) );
-			Vector3 yAxis;
-			yAxis.copy( &axisZ )->multiplyScalar( thickness * cos( angle ) );
-			vertPos.inc( &yAxis );
-			Vector3 vertPos2;
-			Vector3 normalRadial;
-			normalRadial.copy( &vertPos )->normalize();
-			vertPos2.copy( &vertPos )->inc( &p0 );
-			vertPos.inc( &p1 );
-
-			angle += dAngle;
-
-			if ( i == 0 ) {
-				v0.copy( &vertPos );
-				v1.copy( &vertPos2 );
-				continue;
-			} else {
-				v2.copy( &vertPos );
-				v3.copy( &vertPos2 );
-			}
-
-			float v[ 12 ];
-			float n[ 3 ];
-
-			glBegin( GL_TRIANGLES );
-
-			v[ 0 ] = v0.x;
-			v[ 1 ] = v0.y;
-			v[ 2 ] = v0.z;
-			v[ 3 ] = v1.x;
-			v[ 4 ] = v1.y;
-			v[ 5 ] = v1.z;
-			v[ 6 ] = v2.x;
-			v[ 7 ] = v2.y;
-			v[ 8 ] = v2.z;
-			v[ 9 ] = v3.x;
-			v[ 10 ] = v3.y;
-			v[ 11 ] = v3.z;
-
-			n[ 0 ] = normalRadial.x;
-			n[ 1 ] = normalRadial.y;
-			n[ 2 ] = normalRadial.z;
-
-			drawQuad( v, n );
-
-			glEnd();
-
-			v0.copy( &v2 );
-			v1.copy( &v3 );
-
+	
 		}
-
-	}
+		block = rspq_block_end();
+	} rspq_block_run(block);
+	
 
 	finishRender();
 

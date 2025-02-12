@@ -41,15 +41,17 @@ bool ScoreActuator::init( float dt, float time, std::string &error ) {
 
 	GL1Material *material1 = new GL1Material();
 	material1->diffuse.set( 0.5, 0.7, 0.5 );
-	material1->specular.set( 0, 0, 0 );
+	//material1->specular.set( 0, 0, 0 );
 	material1->illuminated = false;
 	material1->texture = phase1->font1->texture;
 	material1->transparent = true;
 	material1->opacity = 1.0;
+	material1->depthTest = false;
 
 	scoreText = new GL1Text3DScreen();
 	scoreText->pose = new Pose();
-	scoreText->pose->position.set( -7.3, 4.2, - 10 );
+	scoreText->pose->position.set( 55, 100, - 15 );
+	scoreText->pose->scale = false;
 	scoreText->pose->updateMatrix();
 	scoreText->init( phase1->font1, material1, Vector3( 1.2, 1.2, 1 ) );
 	scoreText->setString( "0" );

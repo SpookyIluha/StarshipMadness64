@@ -61,6 +61,7 @@ bool SpaceshipActuator::init( float dt, float time, std::string &error ) {
 	GL1Material *laserMaterial = new GL1Material();
 	laserMaterial->illuminated = false;
 	laserMaterial->diffuse.set( 0, 0.7, 1 );
+	laserMaterial->depthTest = true;
 	laser1->material = laserMaterial;
 	laser2->material = laserMaterial;
 
@@ -79,17 +80,17 @@ bool SpaceshipActuator::init( float dt, float time, std::string &error ) {
 	GL1Material *energyMaterial = new GL1Material();
 	energyMaterial->illuminated = false;
 	energyMaterial->emission.set( 0.7, 0.7, 0.25 );
-	energyMaterial->specular.set( 0.0, 0.0, 0.0 );
+	//energyMaterial->specular.set( 0.0, 0.0, 0.0 );
 
 	GL1Material *shieldMaterial = new GL1Material();
 	shieldMaterial->illuminated = false;
 	shieldMaterial->emission.set( 0.1, 0.25, 0.7 );
-	shieldMaterial->specular.set( 0.0, 0.0, 0.0 );
+	//shieldMaterial->specular.set( 0.0, 0.0, 0.0 );
 
 	progressBarEnergy = new ProgressBar();
 	progressBarEnergy->visible = true;
 	progressBarEnergy->material = energyMaterial;
-	progressBarEnergy->cornerNW.set( - 0.6, - 0.8, - 0.5 );
+	progressBarEnergy->cornerNW.set( 64, 430, - 0.5 );
 	progressBarEnergy->cornerSE.set( 0.6, - 0.85, - 0.5 );
 	progressBarEnergy->margin = 0.02;
 	progressBarEnergy->maxSize = 1.2;
@@ -100,7 +101,7 @@ bool SpaceshipActuator::init( float dt, float time, std::string &error ) {
 	progressBarShield = new ProgressBar();
 	progressBarShield->visible = true;
 	progressBarShield->material = shieldMaterial;
-	progressBarShield->cornerNW.set( - 0.6, - 0.9, - 0.5 );
+	progressBarShield->cornerNW.set( 64, 460, - 0.5 );
 	progressBarShield->cornerSE.set( 0.6, - 0.95, - 0.5 );
 	progressBarShield->margin = 0.02;
 	progressBarShield->maxSize = 1.2;
@@ -110,7 +111,8 @@ bool SpaceshipActuator::init( float dt, float time, std::string &error ) {
 
 	radar = new Radar();
 	radar->pose = new Pose();
-	radar->pose->position.set( 4.7, 4.5, - 10 );
+	radar->pose->position.set( 8.7, 8.5, - 20 );
+	radar->pose->scale = true;
 	Vector3 axis( 1, 0, 0 );
 	axis.normalize();
 	radar->pose->rotation.setFromAxisAngle( &axis, M_PI * 0.25 );
@@ -129,6 +131,7 @@ bool SpaceshipActuator::init( float dt, float time, std::string &error ) {
 	condensationLinesLeft->material->diffuse.set( 1, 1, 1 );
 	condensationLinesLeft->material->illuminated = false;
 	condensationLinesLeft->material->doubleSided = true;
+	condensationLinesLeft->material->depthTest = false;
 	p->scene->objects.push_back( condensationLinesLeft );
 
 	condensationLinesRight = new CondensationLines();
@@ -137,6 +140,7 @@ bool SpaceshipActuator::init( float dt, float time, std::string &error ) {
 	condensationLinesRight->material->diffuse.set( 1, 1, 1 );
 	condensationLinesRight->material->illuminated = false;
 	condensationLinesRight->material->doubleSided = true;
+	condensationLinesLeft->material->depthTest = false;
 	p->scene->objects.push_back( condensationLinesRight );
 
 	exhaust = new Bullet();
@@ -148,10 +152,14 @@ bool SpaceshipActuator::init( float dt, float time, std::string &error ) {
 	exhaust->material->doubleSided = true;
 	exhaust->material->transparent = true;
 	exhaust->material->opacity = 1;
-	exhaust->material->texture = GL1Pipeline::loadTexture( SPACESHIP_MADNESS_DIR + std::string( "textures/exhaust.png" ), error );
+	exhaust->material->texture = GL1Pipeline::loadTexture( SPACESHIP_MADNESS_DIR + std::string( "textures/exhaust.sprite" ), error );
+	exhaust->material->depthTest = false;
+	exhaust->material->minZ = 7.0f;
+	exhaust->material->maxZ = 1500.0f;
 	if ( ! exhaust->material->texture ) return false;
 
-	p->scene->objects.push_back( exhaust );
+	//p->scene->objects.push_back( exhaust );
+	((Group *)spaceshipObject)->objects.push_back( exhaust );
 
 	hud = new HUD();
 	hud->pose = new Pose();
@@ -160,6 +168,7 @@ bool SpaceshipActuator::init( float dt, float time, std::string &error ) {
 	hud->material->illuminated = false;
 	hud->material->doubleSided = true;
 	hud->visible = false;
+	hud->material->depthTest = true;
 
 	/*
 	enemyTarget = NULL;
@@ -244,15 +253,15 @@ void SpaceshipActuator::actuate( float dt, float time ) {
 	Quaternion q1, q2;
 	q1.setFromAxisAngle( &axis, value * dt );
 
-	if ( controller->c || controller->d ) {
+	if ( controller->left || controller->right ) {
 		// Roll
 		Quaternion q3;
 		Vector3 rollAxis( 0, 0, -1 );
-		q3.setFromAxisAngle( &rollAxis, ( controller->c ? -1 : 1 ) * 18 * dt );
+		q3.setFromAxisAngle( &rollAxis, ( controller->left ? -1 : 1 ) * 18 * dt );
 		q1.interpolateQuaternions( &q1, &q3, 0.1 );
 	}
 
-	if ( controller->b ) {
+	if ( controller->l ) {
 
 		// Stabilization
 		Vector3 horizontalAxis( 1, 0, 0 );
@@ -314,8 +323,8 @@ void SpaceshipActuator::actuate( float dt, float time ) {
 
 	// Thrust / retro engines
 
-	float targetThrust = controller->rightTrigger;
-	if ( targetThrust == 0 ) targetThrust = - controller->leftTrigger;
+	float targetThrust = controller->up;
+	if ( targetThrust == 0 ) targetThrust = - controller->down;
 
 //	if ( enemyTarget && ! targetCentered ) targetThrust = 0;
 
@@ -431,7 +440,7 @@ void SpaceshipActuator::actuate( float dt, float time ) {
 
 	// Update lasers
 
-	if ( ! hasBeenHit && controller->a ) {
+	if ( ! hasBeenHit && controller->z ) {
 
 		parameters.energy -= dt * 0.15 * 0.5;
 		if ( parameters.energy >= 0 ) updateLaser( laser1, false );
@@ -565,8 +574,10 @@ void SpaceshipActuator::updateLaser( Laser *laser, bool isLeftLaser ) {
 	}
 	Vector3 pos( isLeftLaser ? - 2.46 : 2.46, 0, - 0.25 );
 	Vector3 dir( 0, 0, - 1000 );
+	Vector3 dirvis( 0, 0, - 100 );
 	laser->beginPoint = spaceshipObject->pose->matrix.vector3XMatrix4( &pos );
 	laser->ray = spaceshipObject->pose->matrix.vector3FreeXMatrix4( &dir );
+	laser->rayvis = spaceshipObject->pose->matrix.vector3FreeXMatrix4( &dirvis );
 	laser->visible = true;
 
 	// Collision laser with buildings

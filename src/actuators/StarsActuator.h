@@ -20,7 +20,7 @@
 #pragma once
 
 #include <string>
-#include <dc/maple/controller.h>
+//#include <dc/maple/controller.h>
 #include "game/Actuator.h"
 #include "SpaceshipActuator.h"
 #include "math3d/Vector3.h"

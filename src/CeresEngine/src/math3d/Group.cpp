@@ -22,11 +22,15 @@
 using namespace ceres;
 
 Group::Group() {
+	
 }
 
 Group::~Group() {
 
-	for ( int32_t i = 0, n = objects.size(); i < n; i ++ ) delete objects[ i ];
+	for ( int32_t i = 0, n = objects.size(); i < n; i ++ ) {
+		if(objects[i])
+		delete objects[ i ];
+	}
 
 }
 

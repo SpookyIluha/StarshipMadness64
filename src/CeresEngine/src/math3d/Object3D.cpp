@@ -18,6 +18,7 @@
  */
 
 #include "Object3D.h"
+#include <libdragon.h>
 
 using namespace ceres;
 

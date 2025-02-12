@@ -8,13 +8,16 @@
 
 
 # Directories
-KOS_ROMDISK_DIR := romdisk
 
-CFLAGS += -I../../CeresEngine/src
+BUILD_DIR=build
+
+include $(N64_INST)/include/n64.mk
+include $(N64_INST)/include/t3d.mk
+
+N64_CXXFLAGS += -Isrc/CeresEngine/src -O3 -ffunction-sections -fdata-sections
 
 # File aggregators
 SRCS		:= src/main.cpp
-OBJS		:= src/main.o romdisk.o
 
 # Starship Madness game sources
 include ./StarshipMadnessSourcesMk.txt
@@ -23,31 +26,67 @@ include ./StarshipMadnessSourcesMk.txt
 include ./ceresSourcesMk.txt
 
 # Compiler Flags
-KOS_CPPSTD	:= -std=c++20
-LDLIBS 		:= -lstb_image -lGL -lkmg -lkosutils -lwav
+#KOS_CPPSTD	:= -std=c++20
+#LDLIBS 		:= -lstb_image -lGL -lkmg -lkosutils -lwav
 
-TARGET = starshipmadness.elf
+assets_png = $(wildcard assets/textures/*.png)
+assets_wav = $(wildcard assets/audios/*.wav)
+assets_stl = $(wildcard assets/stls/*.stl)
+assets_xyzuv = $(wildcard assets/xyzuv/*.xyzuv)
+assets_fonts = $(wildcard assets/fonts/*.ttf)
 
-.PHONY: all clean push
+assets_conv = $(addprefix filesystem/textures/,$(notdir $(assets_png:%.png=%.sprite))) \
+			  $(addprefix filesystem/audios/,$(notdir $(assets_wav:%.wav=%.wav64))) \
+			  $(addprefix filesystem/stls/,$(notdir $(assets_stl:%.stl=%.stl))) \
+			  $(addprefix filesystem/xyzuv/,$(notdir $(assets_xyzuv:%.xyzuv=%.xyzuv))) \
+			  $(addprefix filesystem/fonts/,$(notdir $(assets_fonts:%.ttf=%.font64))) 
 
-all: rm-elf $(TARGET)
+all: StarshipMadness64.z64
 
-clean: rm-elf
-	-rm -rf $(OBJS) ./objs/romdisk.*
-	find . -name "*.o" -exec rm {} \;
+filesystem/textures/%.sprite: assets/textures/%.png
+	@mkdir -p $(dir $@)
+	@echo "    [SPRITE] $@"
+	$(N64_MKSPRITE) $(MKSPRITE_FLAGS) -d -o filesystem/textures "$<"
+
+filesystem/stls/%.stl: assets/stls/%.stl
+	@mkdir -p $(dir $@)
+	@echo "    [STL] $@"
+	cp "$<" $@
+
+filesystem/xyzuv/%.xyzuv: assets/xyzuv/%.xyzuv
+	@mkdir -p $(dir $@)
+	@echo "    [XYZUV] $@"
+	cp "$<" $@
+
+filesystem/audios/%.wav64: assets/audios/%.wav
+	@mkdir -p $(dir $@)
+	@echo "    [AUDIO] $@"
+	@$(N64_AUDIOCONV) --wav-compress 1 -o filesystem/audios $<
+
+filesystem/fonts/%.font64: assets/fonts/%.ttf
+	@mkdir -p $(dir $@)
+	@echo "    [FONT] $@"
+	$(N64_MKFONT) $(MKFONT_FLAGS) -o filesystem/fonts "$<"
+
+filesystem/fonts/LazenbyCompLiquid_Large.font64: MKFONT_FLAGS+=--size 64 --outline 2
+filesystem/fonts/LazenbyCompLiquid_Small.font64: MKFONT_FLAGS+=--size 24 --outline 2
 
 
-include $(KOS_BASE)/Makefile.rules
+$(BUILD_DIR)/StarshipMadness64.dfs: $(assets_conv)
+$(BUILD_DIR)/StarshipMadness64.elf: $(SRCS:%.cpp=$(BUILD_DIR)/%.o)
 
-$(TARGET): $(OBJS)
-	kos-c++ -o $(TARGET) $(OBJS) $(LDLIBS)
+StarshipMadness64.z64: N64_ROM_TITLE="Starship Madness 64"
+StarshipMadness64.z64: $(BUILD_DIR)/StarshipMadness64.dfs
 
-dist: $(TARGET)
-	-rm -f $(OBJS)
-	$(KOS_STRIP) $(TARGET)
+clean:
+	rm -rf $(BUILD_DIR) *.z64
+	rm -rf filesystem
 
-rm-elf:
-	-rm -f $(TARGET)
+build_lib:
+	rm -rf $(BUILD_DIR) *.z64
+	make -C $(T3D_INST)
+	make all
 
-run: $(TARGET)
-	$(KOS_LOADER) $(TARGET)
+-include $(wildcard $(BUILD_DIR)/*.d)
+
+.PHONY: all clean

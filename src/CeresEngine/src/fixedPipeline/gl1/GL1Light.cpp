@@ -43,13 +43,13 @@ void GL1Light::updateParams() {
 
 	float rgba[ 4 ];
 	ambient.toArray( rgba, true );
-	glLightfv( lightIndex, GL_AMBIENT, rgba );
+	glLightfv( GL_LIGHT0 + lightIndex, GL_AMBIENT, rgba );
 
 	diffuse.toArray( rgba, true );
-	glLightfv( lightIndex, GL_DIFFUSE, rgba );
+	glLightfv( GL_LIGHT0 + lightIndex, GL_DIFFUSE, rgba );
 
-	specular.toArray( rgba, true );
-	glLightfv( lightIndex, GL_SPECULAR, rgba );
+	//specular.toArray( rgba, true );
+	//glLightfv( GL_LIGHT0 + lightIndex, GL_SPECULAR, rgba );
 
 }
 
@@ -61,12 +61,12 @@ void GL1Light::updatePosition( Camera *camera ) {
 	float xyzw[ 4 ];
 	p.copyToArray( xyzw );
 	xyzw[ 3 ] = isSpot ? 1.0 : 0.0;
-	glLightfv( lightIndex, GL_POSITION, xyzw );
+	glLightfv( GL_LIGHT0 + lightIndex, GL_POSITION, xyzw );
 
 	if ( isSpot ) {
 		Vector3 spot = camera->poseMatrixInverse.vector3XMatrix4( &spotDirection );
 		spot.copyToArray( xyzw );
-		glLightfv( lightIndex, GL_SPOT_DIRECTION, xyzw );
+		glLightfv(GL_LIGHT0 +  lightIndex, GL_SPOT_DIRECTION, xyzw );
 	}
 
 }

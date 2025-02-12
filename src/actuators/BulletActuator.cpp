@@ -41,13 +41,14 @@ bool BulletActuator::init( float dt, float time, std::string &error ) {
 	bulletMaterial->illuminated = false;
 	bulletMaterial->doubleSided = true;
 	bulletMaterial->diffuse.set( 1, 1, 1 );
-	bulletMaterial->specular.set( 0, 0, 0 );
+	//bulletMaterial->specular.set( 0, 0, 0 );
 	bulletMaterial->texture = new GL1Texture();
 	bulletMaterial->transparent = true;
 	bulletMaterial->opacity = 0.5;
-	GL1Texture *bulletTexture = GL1Pipeline::loadTexture( SPACESHIP_MADNESS_DIR + std::string( "textures/bullet1.png" ), error );
+	GL1Texture *bulletTexture = GL1Pipeline::loadTexture( SPACESHIP_MADNESS_DIR + std::string( "textures/bullet1.sprite" ), error );
 	if ( bulletTexture == NULL ) return NULL;
 	bulletMaterial->texture = bulletTexture;
+	bulletMaterial->depthTest = false;
 
 	bulletObject = new Bullet();
 	bulletObject->material = bulletMaterial;

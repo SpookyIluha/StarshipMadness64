@@ -24,6 +24,8 @@
 #include "../math3d/Vector2.h"
 #include "FPTexture.h"
 
+#include <libdragon.h>
+
 namespace ceres {
 
 class FPFont {
@@ -57,6 +59,9 @@ public:
 
 	// The charset texture
 	FPTexture *texture;
+
+	rdpq_font_t* RDPQfontLarge = NULL;
+	rdpq_font_t* RDPQfontSmall = NULL;
 
 };
 

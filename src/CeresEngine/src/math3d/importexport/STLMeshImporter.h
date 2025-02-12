@@ -29,8 +29,10 @@ public:
 	STLMeshImporter();
 	virtual ~STLMeshImporter();
 
-	virtual Mesh *loadMesh( const char *path, float scale = 1.0 );
+	Mesh *loadMesh( const char *path, float scale = 1.0 );
 
 };
 
 }
+
+extern ceres::Mesh * loadSTLMESH(const char *path, float scale);

@@ -28,7 +28,7 @@
 
 #include "utils/utils.h"
 
-#include "arch/arch.h"
+//#include "arch/arch.h"
 
 using namespace ceres;
 
@@ -77,13 +77,14 @@ bool AboutPhase::initPhase( std::string &error ) {
 	textMaterial->texture = font1->texture;
 	textMaterial->transparent = true;
 	textMaterial->opacity = 1.0;
+	textMaterial->depthTest = false;
 
 	GL1Text3D* text = new GL1Text3D();
 	text->pose = new Pose();
-	text->pose->position.set( -6, 3.5, - 8 );
+	text->pose->position.set( 20, 40, - 8 );
 	text->pose->updateMatrix();
 	text->init( font1, textMaterial, Vector3( 0.5, 0.5, 1 ) );
-	text->setString( "Starship Madness\n\nMade with KOS for the DreamDisk 2024\n\nConcept, Code: Yomboprime\nMusic: Airsynth\nHardware ideas testing motivation: Carles\n\nLicense: GPL2.0, KOS License\n\nShip model: Gundy\nSound effects: phoenix1291\nFont: Andrew Young (Creative commons 4.0)\n\n\n                                                   1/3" );
+	text->setString( "Starship Madness\n\nMade with KOS for the DreamDisk 2024\n\nConcept, Code: Yomboprime\nMusic: Airsynth\nHardware ideas testing motivation: Carles\n\nLicense: GPL2.0, KOS License\n\nShip model: Gundy\nSound effects: phoenix1291\nFont: Andrew Young (Creative commons 4.0)\n\n                                                   1/3" );
 	scene0->objects.push_back( text );
 
 	// *************************************************************
@@ -98,14 +99,13 @@ bool AboutPhase::initPhase( std::string &error ) {
 
 	licenseText = new GL1Text3D();
 	licenseText->pose = new Pose();
-	licenseText->pose->position.set( - 6.5, 3.5, - 8 );
+	licenseText->pose->position.set( 20, 40, - 8 );
 	licenseText->pose->updateMatrix();
 	licenseText->init( font1, textMaterial, Vector3( 0.5, 0.5, 1 ) );
 	std::string theString =
-		std::string( "Homebrew game made with KallistiOS\n\n" ) +
+		std::string( "Original homebrew game made with KallistiOS\n\n" ) +
 		std::string( "License GPL2 and KOS License\n\n" ) +
-		std::string( kos_get_authors() ) + std::string( "\n\n" ) +
-		std::string( kos_get_license() ) + std::string( "\n\n" ) +
+		std::string( "Ported by SpookyIluha to N64 with Libdragon\n\n" ) +
 		std::string( "Code and documentation available at\nhttps://codeberg.org/yombo/smadness\n\n\n" ) +
 		std::string( "                                                   2/3" );
 	licenseText->setString( stringLimitLength( theString, 48 ) );
@@ -123,10 +123,10 @@ bool AboutPhase::initPhase( std::string &error ) {
 
 	GL1Text3D *text2 = new GL1Text3D();
 	text2->pose = new Pose();
-	text2->pose->position.set( -6, 3.5, - 8 );
+	text2->pose->position.set( 20, 40, - 8 );
 	text2->pose->updateMatrix();
 	text2->init( font1, textMaterial, Vector3( 0.5, 0.5, 1 ) );
-	text2->setString( "\n\n\nDedicated to our families with love.\n\n\n\n\n\n\n\n\n\n\n\n\n                                                   3/3" );
+	text2->setString( "\n\n\nDedicated to our families with love.\n\n\n\n\n\n\n\n\n                                                  3/3" );
 	scene2->objects.push_back( text2 );
 
 	// Initial scene
@@ -148,7 +148,7 @@ bool AboutPhase::initPhase( std::string &error ) {
 void AboutPhase::terminatePhase() {
 
 	delete camera;
-	for ( uint32 i = 0; i < NUM_SCENES; i ++ ) delete scenes[ i ];
+	for ( uint32_t i = 0; i < NUM_SCENES; i ++ ) delete scenes[ i ];
 
 //	delete collisionables[ "starship" ];
 

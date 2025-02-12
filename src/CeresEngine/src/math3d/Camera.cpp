@@ -20,10 +20,11 @@
 #include "Camera.h"
 
 #include <stdio.h>	// debug, remove
+#include <GL/glu.h>
 
 using namespace ceres;
 
-Camera::Camera(): Camera( 0.01, 500, 65.0, 640.0 / 480.0 ) {}
+Camera::Camera(): Camera( 15, 800, 70, 640.0 / 480.0 ) {}
 
 Camera::Camera( scalar minZ, scalar maxZ, scalar fovYDegrees, scalar aspect ) {
 

@@ -19,7 +19,7 @@
 
 #include "Sound.h"
 
-#include <wav/sndwav.h>
+#include <libdragon.h>
 #include "SpaceshipMadnessConfig.h"
 
 #include "console/console.h"
@@ -28,7 +28,6 @@ using namespace ceres;
 
 Sound::Sound() :
 	playingMusic( false ),
-	musicTrack( -1 ),
 	audioEnabled( true ),
 	musicEnabled( true ) {
 }
@@ -38,14 +37,10 @@ Sound::~Sound() {
 
 bool Sound::loadAudio( std::string name, std::string &error ) {
 
-	std::string path = SPACESHIP_MADNESS_DIR + std::string( "audios/" ) + name + std::string( ".wav" );
+	std::string path = SPACESHIP_MADNESS_DIR + std::string( "audios/" ) + name + std::string( ".wav64" );
 
 	if ( audioEnabled ) {
-		sfxhnd_t audio = snd_sfx_load( path.c_str() );
-		if ( audio == SFXHND_INVALID ) {
-			error = std::string( "Could not load '" ) + name + std::string( ".wav'" );
-			return false;
-		}
+		wav64_t* audio = (wav64_t*)malloc(sizeof(wav64_t)); wav64_open(audio, path.c_str() );
 		audios[ name ] = audio;
 	}
 
@@ -55,7 +50,7 @@ bool Sound::loadAudio( std::string name, std::string &error ) {
 
 void Sound::unloadAudios() {
 
-	snd_sfx_unload_all();
+	//snd_sfx_unload_all();
 	audios.clear();
 
 }
@@ -65,10 +60,17 @@ bool Sound::playAudio( std::string name, float volume, float panning ) {
 	// volume: 0..1
 	// panning: -1..1 (0 center)
 
+	panning = (panning + 1.0) * 0.5f; // to 0..1 range
+
 	if ( audioEnabled ) {
-		sfxhnd_t audio = audios[ name ];
+		wav64_t* audio = audios[ name ];
 		if ( ! audio ) return false;
-		snd_sfx_play( audio, volume * 255.0, ( panning + 1.0 ) * 128.0 );
+		wav64_play(audio, 2 + ((name[0] % 4) * 2)); // volume * 255.0, ( panning + 1.0 ) * 128.0 );
+		float volume_l = 1 - panning;
+		float volume_r = panning;
+		mixer_ch_set_vol(2, volume_l, volume_r);
+		//channel++;
+		//if(channel > 4) channel = 0;
 	}
 
 	return true;
@@ -81,13 +83,14 @@ bool Sound::playMusic( std::string path ) {
 
 	if ( playingMusic ) stopMusic();
 
-	musicTrack = wav_create( path.c_str(), true );
+	 wav64_open(&musicTrack, path.c_str());
 
-	if ( musicTrack < 0 ) return false;
+	//if ( musicTrack < 0 ) return false;
 
-	wav_volume( musicTrack, 60 );
-	wav_play( musicTrack );
-
+	//wav_volume( musicTrack, 60 );
+	wav64_set_loop(&musicTrack, true);
+	wav64_play( &musicTrack, 0 );
+	
 	playingMusic = true;
 
 	return true;
@@ -98,14 +101,14 @@ bool Sound::stopMusic() {
 
 	if ( ! musicEnabled || ! playingMusic ) return true;
 
-	if ( musicTrack < 0 ) return false;
+	//if ( musicTrack < 0 ) return false;
 
-	wav_stop( musicTrack );
-	wav_destroy( musicTrack );
+	mixer_ch_stop( 0 );
+	wav64_close( &musicTrack );
 
 	playingMusic = false;
 
-	musicTrack = 0;
+	memset(&musicTrack, 0, sizeof(wav64_t));
 
 	return true;
 

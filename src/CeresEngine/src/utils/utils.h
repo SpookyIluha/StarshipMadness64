@@ -23,6 +23,8 @@
 #include <string>
 #include <vector>
 
+#include <libdragon.h>
+
 namespace ceres {
 
 // File functions
@@ -61,5 +63,28 @@ float reducePrecision( float input, int32_t precision );
 std::string formatDouble( double value, int32_t precision );
 
 std::string getLicense();
+
+
+// Byte swap unsigned short
+uint16_t byteswap_uint16( uint16_t val );
+
+// Byte swap short
+int16_t byteswap_int16( int16_t val );
+
+// Byte swap unsigned int
+uint32_t byteswap_uint32( uint32_t val );
+
+// Byte swap int
+int32_t byteswap_int32( int32_t val );
+
+// Byte swap unsigned long long
+int64_t byteswap_int64( int64_t val );
+
+// Byte swap unsigned long long
+uint64_t byteswap_uint64( uint64_t val );
+
+float byteswap_float( const float inFloat );
+
+extern  rdpq_font_t* font;
 
 }

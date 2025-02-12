@@ -20,6 +20,7 @@
 #include "ProgressBar.h"
 
 #include <GL/gl.h>
+#include <GL/gl_integration.h>
 
 using namespace ceres;
 
@@ -37,13 +38,25 @@ void ProgressBar::render( Camera *camera ) {
 
 	if ( ! visible ) return;
 
-	setupRender( camera );
+	//setupRender( camera );
 
 	float rgba[ 4 ];
-	GraphicsColor black( 0.2, 0.2, 0.3, 1.0 );
-	black.toArray( rgba, true );
-	glColor4fv( rgba );
+	//GraphicsColor black( 0.2, 0.2, 0.3, 1.0 );
+	material->emission.toArray( rgba, true );
 
+	int margpx = 5;
+	
+	gl_context_end();
+	rdpq_set_mode_fill(RGBA32(50, 50, 75, 0));
+	rdpq_fill_rectangle(cornerNW.x - margpx, cornerNW.y - margpx, cornerNW.x + margpx + 500 * currentSize, cornerNW.y + margpx + 10);
+	rdpq_set_mode_fill(RGBA32((uint8_t)(rgba[0] * 255), (uint8_t)(rgba[1] * 255), (uint8_t)(rgba[2] * 255), 0));
+	rdpq_fill_rectangle(cornerNW.x, cornerNW.y, cornerNW.x + 500 * currentValue, cornerNW.y + 10);
+	//assertf(0, "hp %.2f, %.2f", currentValue, currentSize );
+	//assertf(0, "pos: %.2f, %.2f,%.2f,%.2f", cornerNW.x - margin, cornerNW.y - margin, cornerSE.x + margin, cornerNW.y + margin);
+	gl_context_begin();
+
+	/*
+	glColor4fv( rgba );
 	glBegin( GL_TRIANGLES );
 
 	glNormal3f( 0.0, 0.0, 1.0 );
@@ -73,9 +86,9 @@ void ProgressBar::render( Camera *camera ) {
 	glVertex3f( valueX, cornerSE.y, cornerNW.z );
 	glVertex3f( valueX, cornerNW.y, cornerNW.z );
 
-	glEnd();
+	glEnd();*/
 
-	finishRender();
+	//finishRender();
 
 }
 

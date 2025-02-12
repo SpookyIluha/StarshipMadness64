@@ -56,6 +56,8 @@ public:
 	Pose pose0;
 	Pose pose1;
 
+	rspq_block_t* block = NULL;
+
 };
 
 }

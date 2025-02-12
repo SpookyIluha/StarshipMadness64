@@ -20,7 +20,7 @@
 #include "Stars.h"
 
 #include <GL/gl.h>
-#include <GL/glkos.h>
+//#include <GL/glkos.h>
 
 using namespace ceres;
 
@@ -60,7 +60,7 @@ void Stars::setupRender( Camera *camera ) {
 
 	if ( material ) material->beginUse();
 
-	glPointSize( 300.0 );
+	glPointSize( 2.0 );
 
 }
 

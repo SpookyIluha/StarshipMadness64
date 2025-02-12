@@ -26,6 +26,10 @@ FPFont::FPFont() {
 
 FPFont::~FPFont() {
 	delete texture;
+	if(RDPQfontLarge)
+		rdpq_font_free(RDPQfontLarge);
+	if(RDPQfontSmall)
+		rdpq_font_free(RDPQfontSmall);
 }
 
 void FPFont::initWesternCharset() {
@@ -187,6 +191,7 @@ void FPFont::generateUVs( std::vector<Vector2> characterSizes, FPTexture *textur
 
 	float uPixel = 1.0 / ((float)texture->resolutionX);
 	float vPixel = 1.0 / ((float)texture->resolutionY);
+
 	characterUV0.clear();
 	characterUV1.clear();
 	Vector2 uv0, uv1;
@@ -206,9 +211,11 @@ void FPFont::generateUVs( std::vector<Vector2> characterSizes, FPTexture *textur
 			y += dV;
 		}
 
+		uv0.x += uPixel;
+		uv1.x += uPixel;
 		characterUV0.push_back( uv0 );
 		characterUV1.push_back( uv1 );
-
+		uv1.x -= uPixel;
 		uv0.x = uv1.x;
 
 	}

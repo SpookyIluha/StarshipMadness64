@@ -26,9 +26,13 @@
 using namespace ceres;
 
 GL1Parallelepiped::GL1Parallelepiped() {
+	//this->material = new GL1Material();
 }
 
 GL1Parallelepiped::~GL1Parallelepiped() {
+	if(block)
+		rspq_block_free(block);
+	block = NULL;
 }
 
 void GL1Parallelepiped::render( Camera *camera ) {
@@ -42,102 +46,106 @@ void GL1Parallelepiped::render( Camera *camera ) {
 
 	float v[ 12 ];
 	float normal[ 3 ];
+	if(!block){
+		glBegin( GL_TRIANGLES );
 
-	glBegin( GL_TRIANGLES );
+		// N
+		v[ 0 ] = maxP.x;
+		v[ 1 ] = maxP.y;
+		v[ 2 ] = minP.z;
+		v[ 3 ] = minP.x;
+		v[ 4 ] = maxP.y;
+		v[ 5 ] = minP.z;
+		v[ 6 ] = maxP.x;
+		v[ 7 ] = minP.y;
+		v[ 8 ] = minP.z;
+		v[ 9 ] = minP.x;
+		v[ 10 ] = minP.y;
+		v[ 11 ] = minP.z;
+		normal[ 0 ] = 0;
+		normal[ 1 ] = 0;
+		normal[ 2 ] = - 1;
+		drawQuad( v, normal );
 
-	// N
-	v[ 0 ] = maxP.x;
-	v[ 1 ] = maxP.y;
-	v[ 2 ] = minP.z;
-	v[ 3 ] = minP.x;
-	v[ 4 ] = maxP.y;
-	v[ 5 ] = minP.z;
-	v[ 6 ] = maxP.x;
-	v[ 7 ] = minP.y;
-	v[ 8 ] = minP.z;
-	v[ 9 ] = minP.x;
-	v[ 10 ] = minP.y;
-	v[ 11 ] = minP.z;
-	normal[ 0 ] = 0;
-	normal[ 1 ] = 0;
-	normal[ 2 ] = - 1;
-	drawQuad( v, normal );
+		// S
+		v[ 0 ] = minP.x;
+		v[ 1 ] = maxP.y;
+		v[ 2 ] = maxP.z;
+		v[ 3 ] = maxP.x;
+		v[ 4 ] = maxP.y;
+		v[ 5 ] = maxP.z;
+		v[ 6 ] = minP.x;
+		v[ 7 ] = minP.y;
+		v[ 8 ] = maxP.z;
+		v[ 9 ] = maxP.x;
+		v[ 10 ] = minP.y;
+		v[ 11 ] = maxP.z;
+		normal[ 0 ] = 0;
+		normal[ 1 ] = 0;
+		normal[ 2 ] = 1;
+		drawQuad( v, normal );;
 
-	// S
-	v[ 0 ] = minP.x;
-	v[ 1 ] = maxP.y;
-	v[ 2 ] = maxP.z;
-	v[ 3 ] = maxP.x;
-	v[ 4 ] = maxP.y;
-	v[ 5 ] = maxP.z;
-	v[ 6 ] = minP.x;
-	v[ 7 ] = minP.y;
-	v[ 8 ] = maxP.z;
-	v[ 9 ] = maxP.x;
-	v[ 10 ] = minP.y;
-	v[ 11 ] = maxP.z;
-	normal[ 0 ] = 0;
-	normal[ 1 ] = 0;
-	normal[ 2 ] = 1;
-	drawQuad( v, normal );;
+		// W
+		v[ 0 ] = minP.x;
+		v[ 1 ] = maxP.y;
+		v[ 2 ] = minP.z;
+		v[ 3 ] = minP.x;
+		v[ 4 ] = maxP.y;
+		v[ 5 ] = maxP.z;
+		v[ 6 ] = minP.x;
+		v[ 7 ] = minP.y;
+		v[ 8 ] = minP.z;
+		v[ 9 ] = minP.x;
+		v[ 10 ] = minP.y;
+		v[ 11 ] = maxP.z;
+		normal[ 0 ] = - 1;
+		normal[ 1 ] = 0;
+		normal[ 2 ] = 0;
+		drawQuad( v, normal );
 
-	// W
-	v[ 0 ] = minP.x;
-	v[ 1 ] = maxP.y;
-	v[ 2 ] = minP.z;
-	v[ 3 ] = minP.x;
-	v[ 4 ] = maxP.y;
-	v[ 5 ] = maxP.z;
-	v[ 6 ] = minP.x;
-	v[ 7 ] = minP.y;
-	v[ 8 ] = minP.z;
-	v[ 9 ] = minP.x;
-	v[ 10 ] = minP.y;
-	v[ 11 ] = maxP.z;
-	normal[ 0 ] = - 1;
-	normal[ 1 ] = 0;
-	normal[ 2 ] = 0;
-	drawQuad( v, normal );
+		// E
+		v[ 0 ] = maxP.x;
+		v[ 1 ] = maxP.y;
+		v[ 2 ] = maxP.z;
+		v[ 3 ] = maxP.x;
+		v[ 4 ] = maxP.y;
+		v[ 5 ] = minP.z;
+		v[ 6 ] = maxP.x;
+		v[ 7 ] = minP.y;
+		v[ 8 ] = maxP.z;
+		v[ 9 ] = maxP.x;
+		v[ 10 ] = minP.y;
+		v[ 11 ] = minP.z;
+		normal[ 0 ] = 1;
+		normal[ 1 ] = 0;
+		normal[ 2 ] = 0;
+		drawQuad( v, normal );
 
-	// E
-	v[ 0 ] = maxP.x;
-	v[ 1 ] = maxP.y;
-	v[ 2 ] = maxP.z;
-	v[ 3 ] = maxP.x;
-	v[ 4 ] = maxP.y;
-	v[ 5 ] = minP.z;
-	v[ 6 ] = maxP.x;
-	v[ 7 ] = minP.y;
-	v[ 8 ] = maxP.z;
-	v[ 9 ] = maxP.x;
-	v[ 10 ] = minP.y;
-	v[ 11 ] = minP.z;
-	normal[ 0 ] = 1;
-	normal[ 1 ] = 0;
-	normal[ 2 ] = 0;
-	drawQuad( v, normal );
-
-	// T
-	v[ 0 ] = minP.x;
-	v[ 1 ] = maxP.y;
-	v[ 2 ] = minP.z;
-	v[ 3 ] = maxP.x;
-	v[ 4 ] = maxP.y;
-	v[ 5 ] = minP.z;
-	v[ 6 ] = minP.x;
-	v[ 7 ] = maxP.y;
-	v[ 8 ] = maxP.z;
-	v[ 9 ] = maxP.x;
-	v[ 10 ] = maxP.y;
-	v[ 11 ] = maxP.z;
-	normal[ 0 ] = 0;
-	normal[ 1 ] = 1;
-	normal[ 2 ] = 0;
-	drawQuad( v, normal );
-
-	glEnd();
+		// T
+		v[ 0 ] = minP.x;
+		v[ 1 ] = maxP.y;
+		v[ 2 ] = minP.z;
+		v[ 3 ] = maxP.x;
+		v[ 4 ] = maxP.y;
+		v[ 5 ] = minP.z;
+		v[ 6 ] = minP.x;
+		v[ 7 ] = maxP.y;
+		v[ 8 ] = maxP.z;
+		v[ 9 ] = maxP.x;
+		v[ 10 ] = maxP.y;
+		v[ 11 ] = maxP.z;
+		normal[ 0 ] = 0;
+		normal[ 1 ] = 1;
+		normal[ 2 ] = 0;
+		drawQuad( v, normal );
+		glEnd();
+		
+		block = rspq_block_end();
+	} rspq_block_run(block);
 
 	finishRender();
+
+	
 
 }
 
@@ -147,14 +155,17 @@ void GL1Parallelepiped::setupRender( Camera *camera ) {
 	glPushMatrix();
 	glLoadMatrixf( camera->poseMatrixInverse.e );
 	if ( pose ) glMultMatrixf( pose->matrix.e );
-
-	if ( material ) material->beginUse();
+	if(!block){
+			rspq_block_begin();
+			if ( material ) material->beginUse();
+			glEnable(GL_DEPTH_TEST);
+	}
 }
 
 void GL1Parallelepiped::finishRender() {
 
 	if ( material ) material->endUse();
-
+	glDisable(GL_DEPTH_TEST);
 	glPopMatrix();
 
 }

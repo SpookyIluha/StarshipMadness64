@@ -22,6 +22,7 @@
 #include "console/console.h"
 
 #include <GL/gl.h>
+#include <GL/gl_integration.h>
 
 using namespace ceres;
 
@@ -89,6 +90,19 @@ void GL1Text3D::render( Camera *camera ) {
 
 	if ( ! visible || currentChars <= 0 ) return;
 
+	gl_context_end();
+	Vector3 textpos;
+	textpos.x = pose->position.x; //* 500 / (-pose->position.z);
+	textpos.y = pose->position.y; //* 500 / (pose->position.z);
+
+	rdpq_fontstyle_t style;
+	style.outline_color = RGBA32(0,0,0,255);
+	style.color = RGBA32((uint8_t)(this->material->diffuse.r * 255), (uint8_t)(this->material->diffuse.g * 255), (uint8_t)(this->material->diffuse.b * 255), 255);
+	rdpq_font_style(pose->scale? font->RDPQfontLarge : font->RDPQfontSmall, 0, &style);
+	rdpq_text_print(NULL, pose->scale? 2 : 3, textpos.x + 0, textpos.y + 0, currentContentString.c_str());
+
+	gl_context_begin();
+/*
 	setupRender( camera );
 
 	int32_t newlineIndex = font->newlineIndex;
@@ -155,5 +169,5 @@ void GL1Text3D::render( Camera *camera ) {
 	glEnd();
 
 	finishRender();
-
+*/
 }

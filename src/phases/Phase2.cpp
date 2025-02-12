@@ -110,13 +110,11 @@ bool Phase2::initPhase( std::string &error ) {
 
 	GL1Material *arrowMaterial = new GL1Material();
 	arrowMaterial->diffuse.set( 0.8, 0.8, 0.8 );
-	arrowMaterial->specular.set( 0.0, 0.0, 0.0 );
-	arrowMaterial->minZ =  1;
-	arrowMaterial->maxZ = 1000;
+	//arrowMaterial->specular.set( 0.0, 0.0, 0.0 );
 
 	GL1ObjectUtils objectUtils;
 	Vector3 arrowPosition( 0, 100, -15 );
-	arrow = objectUtils.createObject( SPACESHIP_MADNESS_DIR + std::string( "models/arrow/arrow.stl" ), arrowMaterial, 4.0, arrowPosition, error, new GL1Mesh(), 0.15 );
+	arrow = objectUtils.createObject( SPACESHIP_MADNESS_DIR + std::string( "stls/arrow.stl" ), arrowMaterial, 4.0, arrowPosition, error, new GL1Mesh(), 0.15 );
 	if ( ! arrow ) return false;
 	scene->objects.push_back( arrow );
 

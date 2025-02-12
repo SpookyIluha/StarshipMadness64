@@ -33,8 +33,12 @@ public:
 		emission( GraphicsColor( 0.0, 0.0, 0.0 ) ),
 		ambient( GraphicsColor( 0.2, 0.2, 0.2 ) ),
 		diffuse( GraphicsColor( 0.8, 0.8, 0.8) ),
-		specular( GraphicsColor( 0.8, 0.8, 0.8 ) ),
-		specularExponent( 0.0 ),
+		minZ( -1.0 ),
+		maxZ( -1.0 ),
+		transX( 0.0 ),
+		transY( 0.0 ),
+		//specular( GraphicsColor( 0.8, 0.8, 0.8 ) ),
+		//specularExponent( 0.0 ),
 		doubleSided( false ),
 		flatShading( true ),
 		//wireframe( false ),
@@ -54,8 +58,9 @@ public:
 	GraphicsColor emission;
 	GraphicsColor ambient;
 	GraphicsColor diffuse;
-	GraphicsColor specular;
-	scalar specularExponent;
+	float minZ, maxZ, transX, transY;
+	//GraphicsColor specular;
+	//scalar specularExponent;
 
 	bool doubleSided;
 	bool flatShading;

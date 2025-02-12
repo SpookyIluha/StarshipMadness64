@@ -25,6 +25,7 @@
 
 #include "math3d/Vector3.h"
 #include "math3d/IntersectionPoint.h"
+#include <libdragon.h>
 
 namespace ceres {
 
@@ -95,6 +96,8 @@ public:
 	MeshIndexInt *indices;
 
 	std::vector<Attribute> attributes;
+
+	rspq_block_t* block;
 
 private:
 

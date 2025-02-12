@@ -22,7 +22,7 @@
 #include <string>
 
 #include "math3d/Object3D.h"
-#include "dynamics/PhysicsObject.h"
+//#include "dynamics/PhysicsObject.h"
 #include "Controller.h"
 
 namespace ceres {
@@ -39,7 +39,7 @@ public:
 
 	void *game;
 	Object3D *object;
-	PhysicsObject *physicsObject;
+	//PhysicsObject *physicsObject;
 	void *data;
 	std::string name;
 

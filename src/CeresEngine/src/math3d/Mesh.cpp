@@ -25,6 +25,7 @@
 #include <cstring>
 #include <math.h>
 #include <algorithm>
+#include <libdragon.h>
 
 using namespace ceres;
 
@@ -50,10 +51,11 @@ Mesh::Mesh():
 }
 
 Mesh::~Mesh() {
-
-	delete [] vertices;
-	delete [] indices;
-
+	rspq_wait();
+	if(vertices != NULL)
+		delete [] vertices;
+	if(indices != NULL)
+		delete [] indices;
 }
 
 int32_t Mesh::getNumVerticesPerPrimitive() {

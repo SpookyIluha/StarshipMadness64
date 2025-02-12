@@ -36,6 +36,8 @@ public:
 
 	AABBox box;
 
+	rspq_block_t* block = NULL;
+
 private:
 
 	void drawQuad( float *v, float *normal );

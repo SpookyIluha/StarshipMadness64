@@ -38,11 +38,13 @@ void GL1LightEye::updatePosition( Camera *camera ) {
 	float xyzw[ 4 ];
 	position.copyToArray( xyzw );
 	xyzw[ 3 ] = isSpot ? 1.0 : 0.0;
-	glLightfv( lightIndex, GL_POSITION, xyzw );
+
+	glLightfv( GL_LIGHT0 + lightIndex, GL_POSITION, xyzw );
 
 	if ( isSpot ) {
 		spotDirection.copyToArray( xyzw );
-		glLightfv( lightIndex, GL_SPOT_DIRECTION, xyzw );
+		glLightfv(GL_LIGHT0 +  lightIndex, GL_SPOT_DIRECTION, xyzw );
 	}
+
 
 }

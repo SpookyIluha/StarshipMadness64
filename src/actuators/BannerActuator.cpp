@@ -45,37 +45,48 @@ bool BannerActuator::init( float dt, float time, std::string &error ) {
 
 	GL1Material *material1 = new GL1Material();
 	material1->diffuse.set( 0.3, 0.1, 0.8 );
-	material1->specular.set( 0, 0, 0 );
+	//material1->specular.set( 0, 0, 0 );
 	material1->illuminated = true;
+	material1->depthTest = false;
+	material1->minZ = 1;
+	material1->maxZ = 400;
 
 	GL1Material *material2 = new GL1Material();
 	material2->diffuse.set( 0.9, 0.1, 0.2 );
-	material2->specular.set( 0, 0, 0 );
+	//material2->specular.set( 0, 0, 0 );
 	material2->illuminated = true;
+	material2->depthTest = false;
+	material2->minZ = 1;
+	material2->maxZ = 400;
 
 	GL1ObjectUtils objectUtils;
-	Vector3 bannerPosition( 0, 0, - 4 );
-	Vector3 digitPosition( 1.1, 0, - 4 );
+	Vector3 bannerPosition( 0, 0, -4 );
+	Vector3 digitPosition( 1.1, 0, -4 );
 
-	waveTextObject = objectUtils.createObject( SPACESHIP_MADNESS_DIR + std::string( "models/charset/wave.stl" ), material1, 100.0, digitPosition, error, new BannerMesh() );
+	waveTextObject = objectUtils.createObject( SPACESHIP_MADNESS_DIR + std::string( "stls/wave.stl" ), material1, 100.0, digitPosition, error, new BannerMesh() );
 	if ( ! waveTextObject ) return false;
 	waveTextObject->visible = false;
+	waveTextObject->pose->scale = true;
 	((Phase *)game)->scene->objects.push_back( waveTextObject );
 
-	gameOverTextObject = objectUtils.createObject( SPACESHIP_MADNESS_DIR + std::string( "models/charset/gameover.stl" ), material2, 100.0, bannerPosition, error, new BannerMesh() );
+	gameOverTextObject = objectUtils.createObject( SPACESHIP_MADNESS_DIR + std::string( "stls/gameover.stl" ), material2, 100.0, bannerPosition, error, new BannerMesh() );
 	if ( ! gameOverTextObject ) return false;
 	gameOverTextObject->visible = false;
+	gameOverTextObject->pose->scale = true;
 	((Phase *)game)->scene->objects.push_back( gameOverTextObject );
 
 	for ( int digit = 0; digit < 10; digit ++ ) {
 		GL1Mesh *digitObject = objectUtils.createObject(
-			SPACESHIP_MADNESS_DIR + std::string( "models/charset/" ) +
+			SPACESHIP_MADNESS_DIR + std::string( "stls/" ) +
 			std::to_string( digit ) +
 			std::string( ".stl" ),
 			material1, 100.0, digitPosition, error, new BannerMesh() );
-		if ( ! digitObject ) return false;
+		if ( ! digitObject ) {
+			return false;
+		}
 		digitsTextObjects[ digit ] = digitObject;
 		digitObject->visible = false;
+		digitObject->pose->scale = true;
 		((Phase *)game)->scene->objects.push_back( digitObject );
 	}
 
@@ -84,10 +95,14 @@ bool BannerActuator::init( float dt, float time, std::string &error ) {
 	titleMaterial->texture = ((SpaceGamePhase *)game)->font1->texture;
 	titleMaterial->transparent = true;
 	titleMaterial->opacity = 1.0;
+	titleMaterial->depthTest = false;
+	titleMaterial->minZ = 1;
+	titleMaterial->maxZ = 400;
 
 	bonusText = new GL1Text3DScreen();
 	bonusText->pose = new Pose();
-	bonusText->pose->position.set( - 6, - 4.2, - 8 );
+	bonusText->pose->position.set( 55, 380, -4 );
+	bonusText->pose->scale = true;
 	bonusText->pose->updateMatrix();
 	bonusText->init( ((SpaceGamePhase *)game)->font1, titleMaterial, Vector3( 1.25, 1.25, 1 ) );
 	bonusText->setString( "Time bonus: " );
@@ -100,19 +115,21 @@ bool BannerActuator::init( float dt, float time, std::string &error ) {
 	welldoneMaterial->diffuse.set( 1, 1, 1 );
 	welldoneMaterial->doubleSided = true;
 	welldoneMaterial->depthTest = false;
-	GL1Texture *welldoneTexture = GL1Pipeline::loadTexture( SPACESHIP_MADNESS_DIR + std::string( "textures/gradient1.png" ), error );
+	welldoneMaterial->minZ = 1;
+	welldoneMaterial->maxZ = 3000;
+	GL1Texture *welldoneTexture = GL1Pipeline::loadTexture( SPACESHIP_MADNESS_DIR + std::string( "textures/gradient1.sprite" ), error );
 	if ( welldoneTexture == NULL ) return NULL;
 	welldoneMaterial->texture = welldoneTexture;
 
-	Vector3 welldonePosition( 0, 0, - 180 );
+	Vector3 welldonePosition( 0, 0, - 100 );
 	welldoneText = (BannerMesh *)objectUtils.createPNCObject(
-		SPACESHIP_MADNESS_DIR + std::string( "models/charset/welldone.xyzuv" ),
+		SPACESHIP_MADNESS_DIR + std::string( "xyzuv/welldone.xyzuv" ),
 		welldoneMaterial,
 		10,
-		welldonePosition,
+		welldonePosition,	
 		error,
 		new BannerMesh(),
-		1,
+		1.0,
 		false
 	);
 	if ( ! welldoneText ) return false;
@@ -180,8 +197,9 @@ void BannerActuator::actuate( float dt, float time ) {
 			}
 
 			// Color cycling
-
-			for ( int32_t i = 0, n = welldoneText->mesh->numVertices; i < n; i ++ ) {
+			welldoneText->material->transX += 0.8 * dt;
+			if(welldoneText->material->transX > 2) welldoneText->material->transX = 0;
+			/*for ( int32_t i = 0, n = welldoneText->mesh->numVertices; i < n; i ++ ) {
 
 				// Change U coordinate
 				float u = verts[ i * 5 + 3 ];
@@ -189,7 +207,7 @@ void BannerActuator::actuate( float dt, float time ) {
 				if ( u >= 1 ) u --;
 				verts[ i * 5 + 3 ] = u;
 
-			}
+			}*/
 
 			welldoneText->pose->position.x = dx;
 			welldoneText->pose->updateMatrix();

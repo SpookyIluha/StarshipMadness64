@@ -25,6 +25,7 @@ using namespace ceres;
 
 Laser::Laser():
 	ray( Vector3( 50, 0, 0 ) ),
+	rayvis( Vector3(50,0,0)),
 	thickness( 1.0 ) {
 }
 
@@ -40,7 +41,7 @@ void Laser::render( Camera *camera ) {
 	Matrix4 *m = &camera->poseMatrixInverse;
 
 	Vector3 p0, p1, p2, p3;
-	Vector3 rayUnit = m->vector3FreeXMatrix4( &ray );
+	Vector3 rayUnit = m->vector3FreeXMatrix4( &rayvis );
 	rayUnit.normalize();
 
 	//Vector3 middlePoint = ray;
@@ -54,7 +55,7 @@ void Laser::render( Camera *camera ) {
 	side.crossProduct( &rayUnit, &normal )->multiplyScalar( thickness );
 	Vector3 sideWorld = m->vector3FreeXMatrix4Inverse( &side );
 	Vector3 endPoint;
-	endPoint.add( &beginPoint, &ray );
+	endPoint.add( &beginPoint, &rayvis );
 	p0.copy( &beginPoint )->inc( &sideWorld );
 	p1.copy( &endPoint )->inc( &sideWorld );
 	p2.copy( &beginPoint )->dec( &sideWorld );

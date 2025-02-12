@@ -112,9 +112,11 @@ bool Phase4::initPhase( std::string &error ) {
 
 	GL1Material *material = new GL1Material();
 	material->diffuse.set( 0.6, 0.5, 0.25 );
-	material->specular.set( 0, 0, 0 );
+	//material->specular.set( 0, 0, 0 );
 	Vector3 boatPos( 0, 100, - 500 );
-	boat = objectUtils.createObject( SPACESHIP_MADNESS_DIR + std::string( "models/boat/boat.stl" ), material, 10, boatPos, error, new GL1Mesh(), 30 );
+	material->minZ = 15;
+	material->maxZ = 800;
+	boat = objectUtils.createObject( SPACESHIP_MADNESS_DIR + std::string( "stls/boat.stl" ), material, 10, boatPos, error, new GL1Mesh(), 30 );
 	if ( ! boat ) return false;
 	Vector3 axis( 1, 2, 3 );
 	axis.normalize();
@@ -130,10 +132,12 @@ bool Phase4::initPhase( std::string &error ) {
 
 	GL1Material *material2 = new GL1Material();
 	material2->diffuse.set( 0.1, 0.75, 0.9 );
-	material2->specular.set( 0, 0, 0 );
+	material2->minZ = 15;
+	material2->maxZ = 800;
+	//material2->specular.set( 0, 0, 0 );
 	Vector3 elephantPos( -10, 80, - 900 );
 	axis.set( 2, -1, 0 )->normalize();
-	elephant = objectUtils.createObject( SPACESHIP_MADNESS_DIR + std::string( "models/elephant/Elephant.stl" ), material2, 10, elephantPos, error, new GL1Mesh(), 30 );
+	elephant = objectUtils.createObject( SPACESHIP_MADNESS_DIR + std::string( "stls/Elephant.stl" ), material2, 10, elephantPos, error, new GL1Mesh(), 30 );
 	elephant->pose->rotation.setFromAxisAngle( &axis, 0.8 );
 	elephant->pose->updateMatrix();
 	if ( ! elephant ) return false;

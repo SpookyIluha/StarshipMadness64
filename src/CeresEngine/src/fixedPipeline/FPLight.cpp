@@ -26,8 +26,8 @@ FPLight::FPLight() :
 	lightIndex( -1 ),
 	ambient( GraphicsColor( 0.2, 0.2, 0.2 ) ),
 	diffuse( GraphicsColor( 1.0, 1.0, 1.0 ) ),
-	specular( GraphicsColor( 1.0, 1.0, 1.0 ) ),
-	specularExponent( 0.5 ),
+	//specular( GraphicsColor( 1.0, 1.0, 1.0 ) ),
+	//specularExponent( 0.5 ),
 	isSpot( false ),
 	position( Vector3( 0.2, 1, 0.4 ).normalize() ),
 	spotDirection( Vector3( 0.0, - 1.0, 0.0 ) ) {

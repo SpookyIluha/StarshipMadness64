@@ -20,6 +20,8 @@
 #pragma once
 
 #include <string>
+#include <cstdint>
+#include <libdragon.h>
 
 namespace ceres {
 
@@ -29,15 +31,15 @@ public:
 	FPTexture();
 	virtual ~FPTexture();
 
-	virtual bool init( int32_t resolutionX, int32_t resolutionY, int32_t numComponents, bool magLinearFilter, bool minLinearFilter, bool mipmap, void *data, std::string &error );
+	virtual bool init( bool magLinearFilter, bool minLinearFilter, bool mipmap, sprite_t *data, std::string &error );
 
 	static float *createBuffer( int32_t resolutionX, int32_t resolutionY, int32_t numComponents );
 
-	virtual void upload( void *src );
+	virtual void upload( sprite_t *src );
 
 	static int32_t getPixelSizeBytes( int32_t numComponents );
 
-	int32_t numComponents;
+	tex_format_t numComponents;
 
 	int32_t resolutionX;
 	int32_t resolutionY;
@@ -48,7 +50,8 @@ public:
 	bool repeat;
 
 	int32_t bufferSizeBytes;
-	float *data;
+	sprite_t *data;
+	rdpq_texparms_t texparms;
 
 protected:
 

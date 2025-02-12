@@ -33,8 +33,8 @@
 #include "console/console.h"
 #include "utils/utils.h"
 
-#include <dc/maple.h>
-#include <dc/maple/controller.h>
+//#include <dc/maple.h>
+//#include <dc/maple/controller.h>
 
 using namespace ceres;
 
@@ -69,8 +69,8 @@ public:
 	int32_t selectedPhaseIndex;
 
 	Controller controller;
-	maple_device_t *mapleController;
-	cont_state_t *controllerState;
+	//maple_device_t *mapleController;
+	//cont_state_t *controllerState;
 
 	float theTime;
 

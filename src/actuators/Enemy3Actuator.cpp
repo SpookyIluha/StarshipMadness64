@@ -42,17 +42,22 @@ bool Enemy3Actuator::init( float dt, float time, std::string &error ) {
 
 	GL1Material *rodMaterial = new GL1Material();
 	rodMaterial->diffuse.set( 0.8, 0.5, 0.0 );
-	rodMaterial->specular.set( 0.0, 0.0, 0.0 );
+	rodMaterial->minZ = 15;
+	rodMaterial->maxZ = 800;
+	rodMaterial->depthTest = false;
+	//rodMaterial->specular.set( 0.0, 0.0, 0.0 );
 
 	GL1Material *bodyMaterial = new GL1Material();
 	bodyMaterial->diffuse.set( 0.1, 0.3, 0.6 );
-	bodyMaterial->specular.set( 0.0, 0.0, 0.0 );
+	bodyMaterial->minZ = 15;
+	bodyMaterial->maxZ = 800;
+	//bodyMaterial->specular.set( 0.0, 0.0, 0.0 );
 
 	GL1ObjectUtils objectUtils;
-	rodObject = objectUtils.createObject( SPACESHIP_MADNESS_DIR + std::string( "models/enemy3/rod.stl" ), rodMaterial, 500.0, initialPosition, error, new GL1Mesh(), 100.0 );
+	rodObject = objectUtils.createObject( SPACESHIP_MADNESS_DIR + std::string( "stls/rod.stl" ), rodMaterial, 500.0, initialPosition, error, new GL1Mesh(), 100.0 );
 	if ( ! rodObject ) return false;
 
-	bodyObject = objectUtils.createObject( SPACESHIP_MADNESS_DIR + std::string( "models/enemy3/body.stl" ), bodyMaterial, 100.0, initialPosition, error, new GL1Mesh(), 100.0 );
+	bodyObject = objectUtils.createObject( SPACESHIP_MADNESS_DIR + std::string( "stls/body.stl" ), bodyMaterial, 100.0, initialPosition, error, new GL1Mesh(), 100.0 );
 	if ( ! bodyObject ) return false;
 
 	object = bodyObject;
@@ -72,13 +77,15 @@ bool Enemy3Actuator::init( float dt, float time, std::string &error ) {
 
 		GL1Material *ballMaterial = new GL1Material();
 		ballMaterial->diffuse.set( 0.0, 1.0, 1.0 );
-		ballMaterial->specular.set( 0.0, 0.0, 0.0 );
+		ballMaterial->minZ = 15;
+		ballMaterial->maxZ = 800;
+		//ballMaterial->specular.set( 0.0, 0.0, 0.0 );
 
 		Enemy3Ball *ball = &balls[ i ];
 		ball->health = 1.0;
 		Vector3 pos;
 		pos.set( i & 1 ? - 1 : 1, 0.0, i & 2 ? - 1 : 1 )->multiplyScalar( 90.0 )->inc( &initialPosition );
-		ball->object = objectUtils.createObject( SPACESHIP_MADNESS_DIR + std::string( "models/enemy3/ball.stl" ), ballMaterial, 10.0, pos, error, new GL1Mesh(), 100.0 );
+		ball->object = objectUtils.createObject( SPACESHIP_MADNESS_DIR + std::string( "stls/ball.stl" ), ballMaterial, 10.0, pos, error, new GL1Mesh(), 100.0 );
 
 		RadiusCollisionable *collisionable = new RadiusCollisionable();
 		collisionable->position = &ball->object->pose->position + 20;

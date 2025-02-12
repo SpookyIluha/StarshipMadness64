@@ -173,11 +173,13 @@ bool Menu::createMenus( FPFont *font, Sound *sound ) {
 			textMaterial->texture = font->texture;
 			textMaterial->transparent = true;
 			textMaterial->opacity = 1.0;
+			textMaterial->depthTest = false;
 
 			GL1Text3D *text = new GL1Text3D();
 			text->pose = new Pose();
-			text->pose->position.set( - 4, 1 - j * 1.2, - 7 );
+			text->pose->position.set( 60, 120 + j * 70, - 10 );
 			text->pose->updateMatrix();
+			text->pose->scale = true;
 			text->init( font, textMaterial, Vector3( 1, 1, 1 ) );
 			text->setString( entry->text );
 			objects.push_back( text );

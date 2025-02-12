@@ -47,7 +47,7 @@ SpaceGamePhase::SpaceGamePhase() :
 	ceilingColor( 1, 0, 0 ),
 	squareLength( 40.0 ),
 	squareLineWidth( 2.0 ),
-	zViewDistance( 1500 ),
+	zViewDistance( 350 ),
 	floorGrid( NULL ),
 	ceilingGrid( NULL ),
 	citySize( 1200.0 ),
@@ -64,38 +64,50 @@ SpaceshipActuator *SpaceGamePhase::createSpaceship( bool addActuator, std::strin
 
 	GL1Material *bodyMaterial = new GL1Material();
 	bodyMaterial->diffuse.set( 0.8, 0.3, 0.05 );
-	bodyMaterial->specular.copy( &bodyMaterial->diffuse );
-	bodyMaterial->specularExponent = 0.01;
+	bodyMaterial->minZ = 4.0f;
+	bodyMaterial->maxZ = 500.0f;
+	bodyMaterial->depthTest = true;
+	//bodyMaterial->specular.copy( &bodyMaterial->diffuse );
+	//bodyMaterial->specularExponent = 0.01;
 
 	GL1Material *bodyWhiteMaterial = new GL1Material();
 	bodyWhiteMaterial->diffuse.set( 0.8, 0.8, 0.8 );
-	bodyWhiteMaterial->specular.copy( &bodyWhiteMaterial->diffuse );
-	bodyWhiteMaterial->specularExponent = 0.01;
+	bodyWhiteMaterial->minZ = 4.0f;
+	bodyWhiteMaterial->maxZ = 500.0f;
+	bodyWhiteMaterial->depthTest = true;
+	//bodyWhiteMaterial->specular.copy( &bodyWhiteMaterial->diffuse );
+	//bodyWhiteMaterial->specularExponent = 0.01;
 
 	GL1Material *engineMaterial = new GL1Material();
 	engineMaterial->diffuse.set( 0.2, 0.2, 0.2 );
-	engineMaterial->specular.copy( &engineMaterial->diffuse );
-	engineMaterial->specularExponent = 0.01;
+	engineMaterial->minZ = 4.0f;
+	engineMaterial->maxZ = 500.0f;
+	engineMaterial->depthTest = true;
+	//engineMaterial->specular.copy( &engineMaterial->diffuse );
+	//engineMaterial->specularExponent = 0.01;
 
 	GL1Material *glassMaterial = new GL1Material();
 	glassMaterial->diffuse.set( 0.01, 0, 0.1 );
-	glassMaterial->specular.copy( &glassMaterial->diffuse );
-	glassMaterial->specularExponent = 0.01;
+	glassMaterial->minZ = 4.0f;
+	glassMaterial->maxZ = 500.0f;
+	glassMaterial->depthTest = true;
+	//glassMaterial->specular.copy( &glassMaterial->diffuse );
+	//glassMaterial->specularExponent = 0.01;
 
 	// Create the drawable object
 
 	GL1ObjectUtils objectUtils;
 	Vector3 pos;
 
-	Group *spaceshipObject = new Group();
-	spaceshipObject->pose = new Pose();
+	Group* spaceshipObject = new Group();
+	Pose* p = new Pose();
 
-	spaceshipActuator->object = spaceshipObject;
 
-	GL1Mesh *body = objectUtils.createObject( SPACESHIP_MADNESS_DIR + std::string( "models/ship2/bodywhite.stl" ), bodyWhiteMaterial, 10.0, pos, error, new GL1Mesh(), 1.0, true );
-	GL1Mesh *bodyOrange = objectUtils.createObject( SPACESHIP_MADNESS_DIR + std::string( "models/ship2/bodyorange.stl" ), bodyMaterial, 10.0, pos, error, new GL1Mesh(), 1.0, true );
-	GL1Mesh *engine = objectUtils.createObject( SPACESHIP_MADNESS_DIR + std::string( "models/ship2/engine.stl" ), engineMaterial, 10.0, pos, error );
-	GL1Mesh *glass = objectUtils.createObject( SPACESHIP_MADNESS_DIR + std::string( "models/ship2/glass.stl" ), glassMaterial, 10.0, pos, error, new GL1Mesh(), 1.0, true );
+	//assert(0);
+	GL1Mesh *body = objectUtils.createObject( SPACESHIP_MADNESS_DIR + std::string( "stls/bodywhite.stl" ), bodyWhiteMaterial, 10.0, pos, error, new GL1Mesh(), 1.0, true );
+	GL1Mesh *bodyOrange = objectUtils.createObject( SPACESHIP_MADNESS_DIR + std::string( "stls/bodyorange.stl" ), bodyMaterial, 10.0, pos, error, new GL1Mesh(), 1.0, true );
+	GL1Mesh *engine = objectUtils.createObject( SPACESHIP_MADNESS_DIR + std::string( "stls/engine.stl" ), engineMaterial, 10.0, pos, error );
+	GL1Mesh *glass = objectUtils.createObject( SPACESHIP_MADNESS_DIR + std::string( "stls/glass.stl" ), glassMaterial, 10.0, pos, error, new GL1Mesh(), 1.0, true );
 
 	if ( ! body ) {
 		error = "Could not load bodywhite.stl";
@@ -127,11 +139,17 @@ SpaceshipActuator *SpaceGamePhase::createSpaceship( bool addActuator, std::strin
 	if ( ! spaceshipActuator->init( 0.0, 0.0, error ) ) return NULL;
 	if ( addActuator ) actuators.push_back( spaceshipActuator );
 
+	spaceshipObject->pose = p;
+
+	//spaceshipObject->objects.push_back( spaceshipObject->objects[4] );
+
 	// Create starship collisionable
 	RadiusCollisionable *starshipCol = new RadiusCollisionable();
 	starshipCol->position = &spaceshipActuator->spaceshipObject->pose->position;
 	starshipCol->radius = spaceshipActuator->spaceshipObject->radius;
 	collisionables[ "starship" ] = starshipCol;
+
+	spaceshipActuator->object = spaceshipObject;
 
 	return spaceshipActuator;
 
@@ -202,17 +220,22 @@ void SpaceGamePhase::setDefaultLight( Scene *scene ) {
 	light0->lightIndex = 0;
 	light0->enabled = true;
 	light0->isSpot = false;
-	light0->position.set( 0.0, 0.0, 0.0 );
+	light0->position.set( 0.0, 0.0, 1.0 );
 	light0->ambient.set( 0, 0, 0 );
 	light0->diffuse.set( 1, 1, 1 );
-	light0->specular.set( 0.1, 0.1, 0.1 );
+	//light0->specular.set( 0, 0, 0 );
 	light0->updateParams();
 
 }
 
 void SpaceGamePhase::explodeMeshRandomly( Mesh *mesh, float randomization, float dt ) {
-
+	if(mesh == NULL) return;
 	// No attribute check, assumed only position and normal
+	if(mesh->block){
+		rspq_wait();
+		rspq_block_free(mesh->block);
+		mesh->block = NULL;
+	}
 
 	int32_t stride = 2 * 3;
 	int32_t normalOffset = 3;

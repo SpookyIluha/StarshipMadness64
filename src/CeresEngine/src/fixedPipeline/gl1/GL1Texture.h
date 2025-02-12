@@ -33,9 +33,9 @@ public:
 	GL1Texture();
 	virtual ~GL1Texture();
 
-	virtual bool init( int32_t resolutionX, int32_t resolutionY, int32_t numComponents, bool magLinearFilter, bool minLinearFilter, bool mipmap, void *data, std::string &error ) override;
+	virtual bool init(bool magLinearFilter, bool minLinearFilter, bool mipmap, sprite_t *data, std::string &error ) override;
 
-	virtual void upload( void *src ) override;
+	virtual void upload( sprite_t *src ) override;
 
 	GLenum target;
 	GLuint textureName;
@@ -44,7 +44,7 @@ protected:
 
 	void create( int32_t target );
 
-	bool initInternal( int32_t target, int32_t resolutionX, int32_t resolutionY, int32_t numComponents, bool magLinearFilter, bool minLinearFilter, bool mipmap, void *data, std::string &error );
+	bool initInternal( int32_t target, bool magLinearFilter, bool minLinearFilter, bool mipmap, sprite_t *data, std::string &error );
 
 private:
 

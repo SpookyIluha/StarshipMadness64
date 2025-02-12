@@ -21,8 +21,8 @@
 
 #include <GL/gl.h>
 #include <GL/glu.h>
-#include <GL/glext.h>
-#include <GL/glkos.h>
+//#include <GL/glext.h>
+//#include <GL/glkos.h>
 
 using namespace ceres;
 
@@ -119,8 +119,8 @@ void Radar::setupRender( Camera *camera ) {
 
 	glDisable( GL_DEPTH_TEST );
 
-	glPointSize( 50.0 );
-	glLineWidth( 30.0 );
+	glPointSize( 5.0 );
+	glLineWidth( 3.0 );
 
 }
 

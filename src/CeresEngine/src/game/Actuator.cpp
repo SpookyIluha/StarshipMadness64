@@ -24,7 +24,7 @@ using namespace ceres;
 Actuator::Actuator() :
 	game( NULL ),
 	object( NULL ),
-	physicsObject( NULL ),
+	//physicsObject( NULL ),
 	data( NULL ) {
 }
 

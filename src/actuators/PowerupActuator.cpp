@@ -45,25 +45,26 @@ bool PowerupActuator::init( float dt, float time, std::string &error ) {
 	switch ( powerupType ) {
 		case POWERUP_MAX_ENERGY:
 			powerupMaterial->diffuse.set( 0.7, 0.3, 0.0 );
-			path = SPACESHIP_MADNESS_DIR + std::string( "models/charset/energy.stl" );
+			path = SPACESHIP_MADNESS_DIR + std::string( "stls/energy.stl" );
 			break;
 		case POWERUP_REG_ENERGY:
 			powerupMaterial->diffuse.set( 0.8, 0.6, 0.6 );
-			path = SPACESHIP_MADNESS_DIR + std::string( "models/charset/energy.stl" );
+			path = SPACESHIP_MADNESS_DIR + std::string( "stls/energy.stl" );
 			break;
 		case POWERUP_MAX_SHIELD:
 			powerupMaterial->diffuse.set( 0.0, 0.1, 1.0 );
-			path = SPACESHIP_MADNESS_DIR + std::string( "models/charset/shield.stl" );
+			path = SPACESHIP_MADNESS_DIR + std::string( "stls/shield.stl" );
 			break;
 		case POWERUP_REG_SHIELD:
 			powerupMaterial->diffuse.set( 0.6, 0.6, 0.8 );
-			path = SPACESHIP_MADNESS_DIR + std::string( "models/charset/shield.stl" );
+			path = SPACESHIP_MADNESS_DIR + std::string( "stls/shield.stl" );
 			break;
 		default:
 			break;
 	}
-	powerupMaterial->specular.set( 0.0, 0.0, 0.0 );
-
+	//powerupMaterial->specular.set( 0.0, 0.0, 0.0 );
+	powerupMaterial->minZ = 15;
+	powerupMaterial->maxZ = 800;
 	Vector3 pos( 0, 0, 0 );
 	object = objectUtils.createObject( path, powerupMaterial, 40.0, pos, error, new GL1Mesh(), 8.0 );
 	if ( ! object ) {

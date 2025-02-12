@@ -19,7 +19,9 @@
 
 #include "SpaceGameSimulation.h"
 
-#include <dc/video.h>
+//#include <dc/video.h>
+#include <libdragon.h>
+#include <GL/gl_integration.h>
 
 #include "phases/StartingPhase.h"
 #include "phases/Phase1.h"
@@ -54,8 +56,8 @@ using namespace ceres;
 
 */
 
-#define STARTING_TITLE_MUSIC_PATH ( "/cd/starship_madness_music/lasflores.wav" )
-#define ENDING_TITLE_MUSIC_PATH ( "/cd/starship_madness_music/elviciodelsilicio.wav" )
+#define STARTING_TITLE_MUSIC_PATH ( "rom:/audios/lasflores.wav64" )
+#define ENDING_TITLE_MUSIC_PATH ( "rom:/audios/elviciodelsilicio.wav64" )
 
 std::string SpaceGameSimulation::getTitle() {
 
@@ -78,7 +80,7 @@ bool SpaceGameSimulation::init( std::string& error ) {
 
 	// Get controller
 
-	mapleController = maple_enum_type( 0, MAPLE_FUNC_CONTROLLER );
+	//mapleController = maple_enum_type( 0, MAPLE_FUNC_CONTROLLER );
 
 	// Init GL pipeline
 
@@ -106,7 +108,7 @@ bool SpaceGameSimulation::init( std::string& error ) {
 	// Create screensaver
 
 	screenSaverCamera = new Camera();
-	screenSaverScene = new Scene();
+	screenSaverScene = new GL1Scene();
 	screenSaver = false;
 	timeLastKeypress = 0;
 	screenSaverDirection.set( 1, - 1, 0 );
@@ -117,7 +119,8 @@ bool SpaceGameSimulation::init( std::string& error ) {
 	textMaterial->diffuse.set( 1, 1, 1 );
 	textMaterial->texture = font1->texture;
 	textMaterial->transparent = true;
-	textMaterial->opacity = 1.0;
+	textMaterial->opacity = 0.0;
+	textMaterial->depthTest = false;
 
 	screenSaverText = new GL1Text3D();
 	screenSaverText->pose = new Pose();
@@ -127,7 +130,7 @@ bool SpaceGameSimulation::init( std::string& error ) {
 
 	// Start music
 	if ( ! sound->playMusic( STARTING_TITLE_MUSIC_PATH ) ) {
-		println( "Could not start the music" );
+		debugf( "Could not start the music" );
 	}
 
 	return true;
@@ -137,27 +140,29 @@ bool SpaceGameSimulation::init( std::string& error ) {
 Simulation::SimulationStepResult SpaceGameSimulation::timestep( scalar dt, scalar elapsedRealTime ) {
 
 	// Read controller
+	joypad_poll();
+	joypad_inputs_t state = joypad_get_inputs(JOYPAD_PORT_1);
 
-	controllerState = (cont_state_t *)maple_dev_status( mapleController );
-	if( ! controllerState ) {
-		println( "Error reading controller" );
-		return SIM_TERMINATE;
-	}
-	controller.x1 = controllerState->joyx / 128.0;
-	controller.y1 = controllerState->joyy / 128.0;
-	controller.x2 = controllerState->joy2x / 128.0;
-	controller.y2 = controllerState->joy2y / 128.0;
-	controller.a = controllerState->a;
-	controller.b = controllerState->b;
-	controller.c = controllerState->x;
-	controller.d = controllerState->y;
-	controller.up = controllerState->dpad_up;
-	controller.down = controllerState->dpad_down;
-	controller.left = controllerState->dpad_left;
-	controller.right = controllerState->dpad_right;
-	controller.leftTrigger = controllerState->ltrig / 255.0;
-	controller.rightTrigger = controllerState->rtrig / 255.0;
-	controller.start = controllerState->start;
+	mixer_try_play();
+
+	controller.x1 = state.stick_x / 128.0;
+	controller.y1 = state.stick_y / 128.0;
+	controller.x2 = state.stick_x / 128.0;
+	controller.y2 = state.stick_y / 128.0;
+	controller.a = state.btn.a;
+	controller.b = state.btn.b;
+	controller.c = state.btn.c_left;
+	controller.d = state.btn.c_down;
+	controller.up = state.btn.d_up || state.btn.c_up;
+	controller.down = state.btn.d_down || state.btn.c_down;
+	controller.left = state.btn.d_left || state.btn.c_left;
+	controller.right = state.btn.d_right || state.btn.c_right;
+	controller.leftTrigger = state.analog_l / 255.0;
+	controller.rightTrigger = state.analog_r / 255.0;
+	controller.start = state.btn.start;
+	controller.z = state.btn.z;
+	controller.l = state.btn.l || state.btn.r;
+	//controller.r = state.btn.r;
 
 	// Quick exit from program
 	if ( controller.start && controller.a ) {
@@ -166,12 +171,12 @@ Simulation::SimulationStepResult SpaceGameSimulation::timestep( scalar dt, scala
 
 	// Screen saver
 	if ( screenSaver ) {
-		if ( controllerState->buttons ) {
+		if ( controller.start ) {
 			screenSaver = false;
 			timeLastKeypress = elapsedRealTime;
 		}
 	} else {
-		if ( ! controllerState->buttons ) {
+		if ( ! (state.btn.a || state.btn.b || state.btn.z || state.btn.l || state.btn.r || state.btn.start)) {
 			if ( elapsedRealTime > timeLastKeypress + 300 ) screenSaver = true;
 		} else timeLastKeypress = elapsedRealTime;
 	}
@@ -184,7 +189,7 @@ Simulation::SimulationStepResult SpaceGameSimulation::timestep( scalar dt, scala
 		else menu->show( currentPhaseIndex > 2 );
 	}
 
-
+	mixer_try_play();
 	currentPhase->controller = &controller;
 	currentPhase->menuIsShown = menu->isShown;
 
@@ -210,7 +215,7 @@ Simulation::SimulationStepResult SpaceGameSimulation::timestep( scalar dt, scala
 			}
 		}
 		currentPhase->actuatorsToBeDeleted.clear();
-
+		mixer_try_play();
 		for ( int32_t i = 0, n = currentPhase->actuatorsToBeAdded.size(); i < n; i ++ ) currentPhase->actuators.push_back( currentPhase->actuatorsToBeAdded[ i ] );
 		currentPhase->actuatorsToBeAdded.clear();
 
@@ -247,6 +252,7 @@ Simulation::SimulationStepResult SpaceGameSimulation::timestep( scalar dt, scala
 					// Confirmed exit game
 					return SIM_TERMINATE;
 				case 5:
+
 					// Toggle music
 					if ( sound->playingMusic ) {
 						sound->stopMusic();
@@ -292,25 +298,23 @@ Simulation::SimulationStepResult SpaceGameSimulation::timestep( scalar dt, scala
 		// Terminate current phase
 		currentPhase->terminatePhase();
 
-		println( "delete currentPhase; ..." );
-//		delete currentPhase;
+		debugf( "delete currentPhase; ..." );
+		delete currentPhase;
 		currentPhase = NULL;
-		println( "delete currentPhase; OK" );
+		debugf( "delete currentPhase; OK" );
 
 		// Create the new phase
-		print( "createPhase; ..." );
-		println( std::to_string(  currentPhaseIndex ) );
+		debugf( "createPhase; ..." );
+		debugf( "%ld", currentPhaseIndex );
 		currentPhase = createPhase( currentPhaseIndex );
-		println( "createPhase; OK" );
-
-		vid_border_color( 0, 0, 0 );
+		debugf( "createPhase; OK" );
 
 		theTime = 0;
 
 		// Init new phase
 		std::string error;
 		if ( ! currentPhase->initPhase( error ) ) {
-			println( std::string( "Error initing phase with index " ) + std::to_string( currentPhaseIndex ) + std::string( " : " ) + error );
+			debugf( "Error initing phase with index %ld : %s" , currentPhaseIndex, error.c_str() );
 			return SIM_TERMINATE;
 		}
 
@@ -335,6 +339,9 @@ Simulation::SimulationStepResult SpaceGameSimulation::timestep( scalar dt, scala
 	}
 
 	// Draw scene
+	mixer_try_play();
+	rdpq_attach(display_get(), display_get_zbuf());
+	gl_context_begin();
 
 	glClearColor(
 		currentPhase->backgroundColor.r,
@@ -342,8 +349,29 @@ Simulation::SimulationStepResult SpaceGameSimulation::timestep( scalar dt, scala
 		currentPhase->backgroundColor.b,
 		0.0
 	);
-
+	/*glClearColor(
+		0.2,
+		0.2,
+		0.2,
+		1.0
+	);*/
+	
 	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+
+    glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER, GL_TRUE);
+	glEnable( GL_DEPTH_TEST );
+
+	glEnable(GL_LIGHTING);
+    glEnable(GL_NORMALIZE);
+    glEnable(GL_DEPTH_TEST);
+    glDisable(GL_CULL_FACE);
+
+    glEnable(GL_TEXTURE_2D);
+
+	glMatrixMode(GL_MODELVIEW);
+	glPushMatrix();
+	glScalef(10.0f,10.0f,10.0f);
+	glPushMatrix();
 
 	if ( screenSaver ) drawScreenSaver( dt );
 	else {
@@ -352,7 +380,7 @@ Simulation::SimulationStepResult SpaceGameSimulation::timestep( scalar dt, scala
 
 		if ( menu->isShown ) {
 
-			glDisable( GL_DEPTH_TEST );
+			glEnable( GL_DEPTH_TEST );
 
 			menu->render( menu->camera );
 
@@ -361,7 +389,22 @@ Simulation::SimulationStepResult SpaceGameSimulation::timestep( scalar dt, scala
 		}
 
 	}
+	glMatrixMode(GL_MODELVIEW);
+	glPopMatrix();
+	glPopMatrix();
 
+	gl_context_end();
+
+	heap_stats_t stats;
+	sys_get_heap_stats(&stats);
+
+	//rdpq_text_printf(NULL, 1, 40,40, "FPS: %.2f", display_get_fps());
+	//rdpq_text_printf(NULL, 1, 40,50, "Mem: %i B", stats.used);
+	//rdpq_text_printf(NULL, 1, 40,60, "Time: %.2f ", elapsedRealTime);
+
+
+	rdpq_detach_show();
+	mixer_try_play();
 	// End of frame
 	return SIM_CONTINUE;
 
@@ -396,8 +439,8 @@ int32_t SpaceGameSimulation::getNumPhases() {
 
 SpaceGamePhase *SpaceGameSimulation::createPhase( int32_t index ) {
 
-	print( "createPhase: index: " );
-	println( std::to_string( index ) );
+	debugf( "createPhase: index: " );
+	debugf( "%ld", index );
 
 	SpaceGamePhase *phase = NULL;
 	switch ( index ) {
@@ -435,8 +478,8 @@ SpaceGamePhase *SpaceGameSimulation::createPhase( int32_t index ) {
 		phase->font1 = font1;
 	} else {
 
-		print( "createPhase: Invalid phase index: " );
-		println( std::to_string( index ) );
+		debugf( "createPhase: Invalid phase index: " );
+		debugf( "%ld", index );
 
 	}
 
@@ -482,72 +525,93 @@ bool SpaceGameSimulation::loadAudios( std::string &error ) {
 
 FPFont *SpaceGameSimulation::createFont1( std::string  &error ) {
 
-	GL1Texture *charsetTexture = GL1Pipeline::loadTexture( SPACESHIP_MADNESS_DIR + std::string( "fonts/font1/font1.png" ), error );
+	GL1Texture *charsetTexture = GL1Pipeline::loadTexture( SPACESHIP_MADNESS_DIR + std::string( "textures/font2.ia4.sprite" ), error );
 	if ( charsetTexture == NULL ) return NULL;
 
 	FPFont *font = new FPFont();
 	font->initWesternCharset();
 
+	font->RDPQfontLarge = rdpq_font_load((SPACESHIP_MADNESS_DIR + std::string("fonts/LazenbyCompLiquid_Large.font64")).c_str());
+	font->RDPQfontSmall = rdpq_font_load((SPACESHIP_MADNESS_DIR + std::string("fonts/LazenbyCompLiquid_Small.font64")).c_str());
+	rdpq_text_register_font(2, font->RDPQfontLarge);
+	rdpq_text_register_font(3, font->RDPQfontSmall);
+
+	rdpq_fontstyle_t style1;
+	style1.color = RGBA32(255,255,255,255);
+	style1.outline_color = RGBA32(0,0,0,255);
+	rdpq_font_style(font->RDPQfontLarge, 0, &style1);
+	rdpq_font_style(font->RDPQfontSmall, 0, &style1);
+	rdpq_fontstyle_t style2;
+	style2.color = RGBA32(25,64,178,255);
+	style2.outline_color = RGBA32(0,0,0,255);
+	rdpq_font_style(font->RDPQfontLarge, 1, &style2);
+	rdpq_font_style(font->RDPQfontSmall, 1, &style2);
+	rdpq_fontstyle_t style3;
+	style3.color = RGBA32(127,178,127,255);
+	style3.outline_color = RGBA32(0,0,0,255);
+	rdpq_font_style(font->RDPQfontLarge, 2, &style3);
+	rdpq_font_style(font->RDPQfontSmall, 2, &style3);
+
 	std::vector<Vector2> characterSizes;
 
 	// space, A-S
-	characterSizes.push_back( Vector2( 32, 87 ) );
-	characterSizes.push_back( Vector2( 53, 87 ) );
-	characterSizes.push_back( Vector2( 55, 87 ) );
-	characterSizes.push_back( Vector2( 46, 87 ) );
-	characterSizes.push_back( Vector2( 53, 87 ) );
-	characterSizes.push_back( Vector2( 44, 87 ) );
-	characterSizes.push_back( Vector2( 42, 87 ) );
-	characterSizes.push_back( Vector2( 54, 87 ) );
-	characterSizes.push_back( Vector2( 51, 87 ) );
-	characterSizes.push_back( Vector2( 22, 87 ) );
-	characterSizes.push_back( Vector2( 55, 87 ) );
-	characterSizes.push_back( Vector2( 55, 87 ) );
-	characterSizes.push_back( Vector2( 44, 87 ) );
-	characterSizes.push_back( Vector2( 63, 87 ) );
-	characterSizes.push_back( Vector2( 55, 87 ) );
-	characterSizes.push_back( Vector2( 52, 87 ) );
-	characterSizes.push_back( Vector2( 52, 87 ) );
-	characterSizes.push_back( Vector2( 53, 87 ) );
-	characterSizes.push_back( Vector2( 56, 87 ) );
-	characterSizes.push_back( Vector2( 45, 87 ) );
+	characterSizes.push_back( Vector2( 32.0 / 8.0, 87.0 / 8.0 ) );
+	characterSizes.push_back( Vector2( 53.0 / 8.0, 87.0 / 8.0) );
+	characterSizes.push_back( Vector2( 55.0 / 8.0, 87.0 / 8.0) );
+	characterSizes.push_back( Vector2( 46.0 / 8.0, 87.0 / 8.0) );
+	characterSizes.push_back( Vector2( 53.0 / 8.0, 87.0 / 8.0) );
+	characterSizes.push_back( Vector2( 44.0 / 8.0, 87.0 / 8.0) );
+	characterSizes.push_back( Vector2( 42.0 / 8.0, 87.0 / 8.0) );
+	characterSizes.push_back( Vector2( 54.0 / 8.0, 87.0 / 8.0) );
+	characterSizes.push_back( Vector2( 51.0 / 8.0, 87.0 / 8.0) );
+	characterSizes.push_back( Vector2( 22.0 / 8.0, 87.0 / 8.0) );
+	characterSizes.push_back( Vector2( 55.0 / 8.0, 87.0 / 8.0) );
+	characterSizes.push_back( Vector2( 55.0 / 8.0, 87.0 / 8.0) );
+	characterSizes.push_back( Vector2( 44.0 / 8.0, 87.0 / 8.0) );
+	characterSizes.push_back( Vector2( 63.0 / 8.0, 87.0 / 8.0) );
+	characterSizes.push_back( Vector2( 55.0 / 8.0, 87.0 / 8.0) );
+	characterSizes.push_back( Vector2( 52.0 / 8.0, 87.0 / 8.0) );
+	characterSizes.push_back( Vector2( 52.0 / 8.0, 87.0 / 8.0) );
+	characterSizes.push_back( Vector2( 53.0 / 8.0, 87.0 / 8.0) );
+	characterSizes.push_back( Vector2( 56.0 / 8.0, 87.0 / 8.0) );
+	characterSizes.push_back( Vector2( 45.0 / 8.0, 87.0 / 8.0) );
 
 	// T-Z
-	characterSizes.push_back( Vector2( 54, 87 ) );
-	characterSizes.push_back( Vector2( 48, 87 ) );
-	characterSizes.push_back( Vector2( 47, 87 ) );
-	characterSizes.push_back( Vector2( 63, 87 ) );
-	characterSizes.push_back( Vector2( 46, 87 ) );
-	characterSizes.push_back( Vector2( 47, 87 ) );
-	characterSizes.push_back( Vector2( 51, 87 ) );
+	characterSizes.push_back( Vector2( 54.0 / 8.0, 87.0 / 8.0) );
+	characterSizes.push_back( Vector2( 48.0 / 8.0, 87.0 / 8.0) );
+	characterSizes.push_back( Vector2( 47.0 / 8.0, 87.0 / 8.0) );
+	characterSizes.push_back( Vector2( 63.0 / 8.0, 87.0 / 8.0) );
+	characterSizes.push_back( Vector2( 46.0 / 8.0, 87.0 / 8.0) );
+	characterSizes.push_back( Vector2( 47.0 / 8.0, 87.0 / 8.0) );
+	characterSizes.push_back( Vector2( 51.0 / 8.0, 87.0 / 8.0) );
 
 	// 0-9
-	characterSizes.push_back( Vector2( 59, 87 ) );
-	characterSizes.push_back( Vector2( 31, 87 ) );
-	characterSizes.push_back( Vector2( 37, 87 ) );
-	characterSizes.push_back( Vector2( 45, 87 ) );
-	characterSizes.push_back( Vector2( 53, 87 ) );
-	characterSizes.push_back( Vector2( 45, 87 ) );
-	characterSizes.push_back( Vector2( 53, 87 ) );
-	characterSizes.push_back( Vector2( 46, 87 ) );
-	characterSizes.push_back( Vector2( 59, 87 ) );
-	characterSizes.push_back( Vector2( 52, 87 ) );
+	characterSizes.push_back( Vector2( 59.0 / 8.0, 87.0 / 8.0) );
+	characterSizes.push_back( Vector2( 31.0 / 8.0, 87.0 / 8.0) );
+	characterSizes.push_back( Vector2( 37.0 / 8.0, 87.0 / 8.0) );
+	characterSizes.push_back( Vector2( 45.0 / 8.0, 87.0 / 8.0) );
+	characterSizes.push_back( Vector2( 53.0 / 8.0, 87.0 / 8.0) );
+	characterSizes.push_back( Vector2( 45.0 / 8.0, 87.0 / 8.0) );
+	characterSizes.push_back( Vector2( 53.0 / 8.0, 87.0 / 8.0) );
+	characterSizes.push_back( Vector2( 46.0 / 8.0, 87.0 / 8.0) );
+	characterSizes.push_back( Vector2( 59.0 / 8.0, 87.0 / 8.0) );
+	characterSizes.push_back( Vector2( 52.0 / 8.0, 87.0 / 8.0) );
 
 	// / ( ) . -
-	characterSizes.push_back( Vector2( 47, 87 ) );
-	characterSizes.push_back( Vector2( 28, 87 ) );
-	characterSizes.push_back( Vector2( 28, 87 ) );
-	characterSizes.push_back( Vector2( 22, 87 ) );
-	characterSizes.push_back( Vector2( 33, 87 ) );
+	characterSizes.push_back( Vector2( 47.0 / 8.0, 87.0 / 8.0) );
+	characterSizes.push_back( Vector2( 28.0 / 8.0, 87.0 / 8.0) );
+	characterSizes.push_back( Vector2( 28.0 / 8.0, 87.0 / 8.0) );
+	characterSizes.push_back( Vector2( 22.0 / 8.0, 87.0 / 8.0) );
+	characterSizes.push_back( Vector2( 33.0 / 8.0, 87.0 / 8.0) );
 
 	// _ + * = : ! ,
-	characterSizes.push_back( Vector2( 46, 87 ) );
-	characterSizes.push_back( Vector2( 55, 87 ) );
-	characterSizes.push_back( Vector2( 28, 87 ) );
-	characterSizes.push_back( Vector2( 47, 87 ) );
-	characterSizes.push_back( Vector2( 22, 87 ) );
-	characterSizes.push_back( Vector2( 26, 87 ) );
-	characterSizes.push_back( Vector2( 22, 90 ) );
+	characterSizes.push_back( Vector2( 46.0 / 8.0, 87.0 / 8.0) );
+	characterSizes.push_back( Vector2( 55.0 / 8.0, 87.0 / 8.0) );
+	characterSizes.push_back( Vector2( 28.0 / 8.0, 87.0 / 8.0) );
+	characterSizes.push_back( Vector2( 47.0 / 8.0, 87.0 / 8.0) );
+	characterSizes.push_back( Vector2( 22.0 / 8.0, 87.0 / 8.0) );
+	characterSizes.push_back( Vector2( 26.0 / 8.0, 87.0 / 8.0) );
+	characterSizes.push_back( Vector2( 22.0 / 8.0, 90.0 / 8.0 ) );
 
 	font->generateUVs( characterSizes, charsetTexture );
 
@@ -563,6 +627,8 @@ void SpaceGameSimulation::drawScreenSaver( float dt ) {
 	screenSaverPos.x += increm.x;
 	screenSaverPos.y += increm.y;
 
+	//rdpq_text_printf(NULL, 1, 20,20 , "screenSaverPos: %.2f, %.2f", screenSaverPos.x, screenSaverPos.y);
+	//rdpq_text_printf(NULL, 1, 20,30 , "dt: %.2f", dt);
 
 	float lx = 4;
 	float ly = 4;

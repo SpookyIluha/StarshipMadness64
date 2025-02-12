@@ -22,9 +22,6 @@
 using namespace ceres;
 
 FPTexture::FPTexture() :
-	numComponents( 0 ),
-	resolutionX( 0 ),
-	resolutionY( 0 ),
 	magLinearFilter( false ),
 	repeat( true ),
 	bufferSizeBytes( 0 ),
@@ -32,7 +29,7 @@ FPTexture::FPTexture() :
 }
 
 FPTexture::~FPTexture() {
-	delete data;
+	sprite_free(data);
 }
 
 int32_t FPTexture::getPixelSizeBytes( int32_t numComponents ) {
@@ -43,7 +40,7 @@ int32_t FPTexture::getPixelSizeBytes( int32_t numComponents ) {
 }
 
 
-bool FPTexture::init( int32_t resolutionX, int32_t resolutionY, int32_t numComponents, bool magLinearFilter, bool minLinearFilter, bool mipmap, void *data, std::string &error ) {
+bool FPTexture::init( bool magLinearFilter, bool minLinearFilter, bool mipmap, sprite_t *data, std::string &error ) {
 	return false;
 }
 
@@ -53,5 +50,5 @@ float *FPTexture::createBuffer( int32_t resolutionX, int32_t resolutionY, int32_
 
 }
 
-void FPTexture::upload( void *src ) {
+void FPTexture::upload( sprite_t *src ) {
 }

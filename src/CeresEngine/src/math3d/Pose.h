@@ -36,6 +36,7 @@ public:
     Vector3 position;
 	Quaternion rotation;
 	Matrix4 matrix;
+	bool scale;
 
 private:
 

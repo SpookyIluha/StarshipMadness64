@@ -20,7 +20,7 @@
 #pragma once
 
 #include <string>
-#include <dc/maple/controller.h>
+//#include <dc/maple/controller.h>
 #include "game/Actuator.h"
 #include "fixedPipeline/gl1/GL1Mesh.h"
 #include "math3d/Vector3.h"
@@ -76,6 +76,7 @@ public:
 	virtual ~SpaceshipActuator();
 
 	virtual bool init( float dt, float time, std::string &error ) override;
+	bool init2( float dt, float time, std::string &error );
 	virtual void actuate( float dt, float time ) override;
 	virtual void finish( float dt, float time ) override;
 
@@ -90,7 +91,7 @@ public:
 	Actuator *selectNextTarget();
 
 	Object3D *spaceshipObject;
-	GL1Mesh *hull;
+	GL1Mesh *hull = NULL;
 	Camera *camera;
 
 	Laser *laser1;

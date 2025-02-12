@@ -22,6 +22,7 @@
 #include "console/console.h"
 
 #include <sys/stat.h>
+#include "utils/utils.h"
 
 using namespace ceres;
 
@@ -43,6 +44,9 @@ Mesh *MeshImporter::loadMesh( const char *path, float scale ) {
 		delete [] buffer;
 		return NULL;
 	}
+	for(size_t i = 0; i < sizeFloats; i++)
+	buffer[i] = byteswap_float(buffer[i]);
+
 
 	Vector3 minPos, maxPos;
 
@@ -51,7 +55,6 @@ Mesh *MeshImporter::loadMesh( const char *path, float scale ) {
 	int32_t inc = normal ? 5 : 3;
 	int32_t p = 0;
 	for ( int32_t i = 0, n = sizeFloats; i < n; i += inc + 3 ) {
-
 		buffer[ p ++ ] *= scale;
 		buffer[ p ++ ] *= scale;
 		buffer[ p ++ ] *= scale;
