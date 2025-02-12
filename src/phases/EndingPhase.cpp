@@ -118,6 +118,9 @@ void EndingPhase::timestep( float dt, float time ) {
 
 	// Color cycling
 
+	band->material->transX += 0.8 * dt;
+	if(band->material->transX > 2) band->material->transX = 0;
+/*
 	float *verts = band->mesh->vertices;
 	for ( int32_t i = 0, n = band->mesh->numVertices; i < n; i ++ ) {
 
@@ -127,7 +130,7 @@ void EndingPhase::timestep( float dt, float time ) {
 		if ( u >= 1 ) u --;
 		verts[ i * 5 + 3 ] = u;
 
-	}
+	}*/
 
 	// Movement
 
