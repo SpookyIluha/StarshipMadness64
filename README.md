@@ -11,6 +11,7 @@ This is a fork and a port of a game project from [codeberg](https://codeberg.org
     See licenses/LICENSE.KOS.txt for the full license and licenses/KOS_AUTHORS.txt
     for the copyright holders list.
 
+![boxart](https://github.com/user-attachments/assets/04d58630-5ec8-49dc-8b16-e0480bbfa864)
 
 # Game authors
 
