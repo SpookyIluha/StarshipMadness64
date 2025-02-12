@@ -1,7 +1,6 @@
+This is a fork and a port of a game project from [codeberg](https://codeberg.org/yombo/smadness/src/branch/main/experiments/StarshipMadness)
 
 # Spaceship Madness game ported to Nintendo 64
-
-    This is a fork and a port of a game project from [codeberg](https://codeberg.org/yombo/smadness/src/branch/main/experiments/StarshipMadness)
 
     Copyright © 2024 Yomboprime GPL 2.0 codeberg.org/yombo
 
@@ -12,6 +11,7 @@
     See licenses/LICENSE.KOS.txt for the full license and licenses/KOS_AUTHORS.txt
     for the copyright holders list.
 
+![boxart](https://github.com/user-attachments/assets/04d58630-5ec8-49dc-8b16-e0480bbfa864)
 
 # Game authors
 
@@ -46,6 +46,9 @@ There are still some issues with depth precision and some functionality is not y
 # Running
 
 Tested on Ares and real hardware. ```.z64``` image can be obtained in releases.
+
+![screenshot1](https://github.com/user-attachments/assets/6f814248-c631-436e-a257-8ef0542168d2)
+![screenshot2](https://github.com/user-attachments/assets/83bb90aa-d378-45a4-bf83-d04d825e7949)
 
 
 
