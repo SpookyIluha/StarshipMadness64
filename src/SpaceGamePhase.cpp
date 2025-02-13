@@ -63,8 +63,8 @@ SpaceshipActuator *SpaceGamePhase::createSpaceship( bool addActuator, std::strin
 	// Materials
 
 	GL1Material *bodyMaterial = new GL1Material();
-	bodyMaterial->emission.set( 0.8, 0.3, 0.05 );
-	bodyMaterial->diffuse.set( 0.6, 0.4, 0.05 );
+	bodyMaterial->emission.set( 0.6, 0.2, 0.05 );
+	bodyMaterial->diffuse.set( 0.6, 0.55, 0.05 );
 	bodyMaterial->minZ = 4.0f;
 	bodyMaterial->maxZ = 500.0f;
 	bodyMaterial->depthTest = true;
