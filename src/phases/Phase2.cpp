@@ -110,11 +110,14 @@ bool Phase2::initPhase( std::string &error ) {
 
 	GL1Material *arrowMaterial = new GL1Material();
 	arrowMaterial->diffuse.set( 0.8, 0.8, 0.8 );
+	arrowMaterial->minZ = 1;
+	arrowMaterial->maxZ = 800;
 	//arrowMaterial->specular.set( 0.0, 0.0, 0.0 );
 
 	GL1ObjectUtils objectUtils;
-	Vector3 arrowPosition( 0, 100, -15 );
+	Vector3 arrowPosition( 0, 100, -45 );
 	arrow = objectUtils.createObject( SPACESHIP_MADNESS_DIR + std::string( "stls/arrow.stl" ), arrowMaterial, 4.0, arrowPosition, error, new GL1Mesh(), 0.15 );
+	arrow->pose->scale = 2;
 	if ( ! arrow ) return false;
 	scene->objects.push_back( arrow );
 
@@ -212,7 +215,7 @@ void Phase2::createEnemiesWave( int32_t wave, float time ) {
 	Enemy3Actuator *enemy3 = new Enemy3Actuator();
 	enemy3->spaceshipActuator = spaceshipActuator;
 	enemy3->game = this;
-	float d = 3000;
+	float d = 1800;
 	enemy3->initialPosition.set( 2.0 * ( frand() - 0.5 ) * d, 250, 2.0 * ( frand() - 0.5 ) * d );
 	currentROI.y = 0;
 	enemy3->initialPosition.inc( &currentROI );

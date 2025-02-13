@@ -42,14 +42,14 @@ bool Enemy3Actuator::init( float dt, float time, std::string &error ) {
 
 	GL1Material *rodMaterial = new GL1Material();
 	rodMaterial->diffuse.set( 0.8, 0.5, 0.0 );
-	rodMaterial->minZ = 15;
+	rodMaterial->minZ = 3;
 	rodMaterial->maxZ = 800;
-	rodMaterial->depthTest = false;
+	rodMaterial->depthTest = true;
 	//rodMaterial->specular.set( 0.0, 0.0, 0.0 );
 
 	GL1Material *bodyMaterial = new GL1Material();
 	bodyMaterial->diffuse.set( 0.1, 0.3, 0.6 );
-	bodyMaterial->minZ = 15;
+	bodyMaterial->minZ = 25;
 	bodyMaterial->maxZ = 800;
 	//bodyMaterial->specular.set( 0.0, 0.0, 0.0 );
 

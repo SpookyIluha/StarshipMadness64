@@ -95,6 +95,7 @@ public:
 	Camera *camera;
 
 	Object3D* laserobj;
+	Object3D* linesobj;
 	Laser *laser1;
 	LaserCollisionable *laserCol1;
 	Laser *laser2;

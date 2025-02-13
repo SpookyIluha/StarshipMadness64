@@ -46,13 +46,13 @@ bool TesseractActuator::init( float dt, float time, std::string &error ) {
 	tesseractMaterial->diffuse.set( 0.8, 0.8, 0.8 );
 	//tesseractMaterial->specular.set( 0.0, 0.0, 0.0 );
 	tesseractMaterial->doubleSided = false;
-	tesseractMaterial->minZ = 15;
-	tesseractMaterial->maxZ = 400;
+	tesseractMaterial->minZ = 25;
+	tesseractMaterial->maxZ = 300;
 
 	GL1Material *coreMaterial = new GL1Material();
 	coreMaterial->diffuse.set( 0, 0.5, 0.8 );
-	coreMaterial->minZ = 15;
-	coreMaterial->maxZ = 400;
+	coreMaterial->minZ = 25;
+	coreMaterial->maxZ = 300;
 	//coreMaterial->specular.set( 0.0, 0.0, 0.0 );
 
 	tesseractObject = new Tesseract();

@@ -98,6 +98,13 @@ SpaceshipActuator *SpaceGamePhase::createSpaceship( bool addActuator, std::strin
 	laserMaterial->minZ = 4.0f;
 	laserMaterial->maxZ = 500.0f;
 	laserMaterial->depthTest = true;
+
+	GL1Material *linesMaterial = new GL1Material();
+	linesMaterial->illuminated = false;
+	linesMaterial->diffuse.set( 0.9, 0.9, 0.9 );
+	linesMaterial->minZ = 4.0f;
+	linesMaterial->maxZ = 500.0f;
+	linesMaterial->depthTest = true;
 	//glassMaterial->specular.copy( &glassMaterial->diffuse );
 	//glassMaterial->specularExponent = 0.01;
 
@@ -116,6 +123,7 @@ SpaceshipActuator *SpaceGamePhase::createSpaceship( bool addActuator, std::strin
 	GL1Mesh *engine = objectUtils.createObject( SPACESHIP_MADNESS_DIR + std::string( "stls/engine.stl" ), engineMaterial, 10.0, pos, error );
 	GL1Mesh *glass = objectUtils.createObject( SPACESHIP_MADNESS_DIR + std::string( "stls/glass.stl" ), glassMaterial, 10.0, pos, error, new GL1Mesh(), 1.0, true );
 	GL1Mesh *laser = objectUtils.createObject( SPACESHIP_MADNESS_DIR + std::string( "stls/bodylaser.stl" ), laserMaterial, 10.0, pos, error, new GL1Mesh(), 1.0, true );
+	GL1Mesh *lines = objectUtils.createObject( SPACESHIP_MADNESS_DIR + std::string( "stls/bodylines.stl" ), linesMaterial, 10.0, pos, error, new GL1Mesh(), 1.0, true );
 
 	if ( ! body ) {
 		error = "Could not load bodywhite.stl";
@@ -139,6 +147,7 @@ SpaceshipActuator *SpaceGamePhase::createSpaceship( bool addActuator, std::strin
 	spaceshipObject->objects.push_back( engine );
 	spaceshipObject->objects.push_back( glass );
 	spaceshipObject->objects.push_back( laser );
+	spaceshipObject->objects.push_back( lines );
 
 	// Create spaceship actuator
 	SpaceshipActuator *spaceshipActuator = new SpaceshipActuator();
@@ -146,6 +155,7 @@ SpaceshipActuator *SpaceGamePhase::createSpaceship( bool addActuator, std::strin
 	spaceshipActuator->camera = camera;
 	spaceshipActuator->game = addActuator ? this : NULL;
 	spaceshipActuator->laserobj = laser;
+	spaceshipActuator->linesobj = lines;
 	if ( ! spaceshipActuator->init( 0.0, 0.0, error ) ) return NULL;
 	if ( addActuator ) actuators.push_back( spaceshipActuator );
 

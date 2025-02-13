@@ -132,6 +132,8 @@ bool SpaceshipActuator::init( float dt, float time, std::string &error ) {
 	condensationLinesLeft->material->illuminated = false;
 	condensationLinesLeft->material->doubleSided = true;
 	condensationLinesLeft->material->depthTest = false;
+	condensationLinesLeft->material->minZ = 1;
+	condensationLinesLeft->material->maxZ= 1000;
 	p->scene->objects.push_back( condensationLinesLeft );
 
 	condensationLinesRight = new CondensationLines();
@@ -140,7 +142,9 @@ bool SpaceshipActuator::init( float dt, float time, std::string &error ) {
 	condensationLinesRight->material->diffuse.set( 1, 1, 1 );
 	condensationLinesRight->material->illuminated = false;
 	condensationLinesRight->material->doubleSided = true;
-	condensationLinesLeft->material->depthTest = false;
+	condensationLinesRight->material->depthTest = false;
+	condensationLinesRight->material->minZ = 1;
+	condensationLinesRight->material->maxZ= 1000;
 	p->scene->objects.push_back( condensationLinesRight );
 
 	exhaust = new Bullet();
@@ -554,19 +558,20 @@ void SpaceshipActuator::actuate( float dt, float time ) {
 
 	// Update condensation trail lines
 
-	condensationLinesLeft->trailPoints[ 0 ].set( - 6.5, - 0.21, 4.62 );
-	Vector3 velObj;
-	velObj = spaceshipObject->pose->matrix.vector3FreeXMatrix4Inverse( &velocity );
-	condensationLinesLeft->trailPoints[ 1 ].set( - 6.5 + velObj.x * 0.025, - 0.21 + velObj.y * 0.025, 25 );
+	//condensationLinesLeft->trailPoints[ 0 ].set( - 6.5, - 0.21, 4.62 );
+	//Vector3 velObj;
+	//velObj = spaceshipObject->pose->matrix.vector3FreeXMatrix4Inverse( &velocity );
+	//condensationLinesLeft->trailPoints[ 1 ].set( - 6.5 + velObj.x * 0.025, - 0.21 + velObj.y * 0.025, 25 );
 	float v = velocity.length();
-	condensationLinesLeft->visible = v > 200;
-	condensationLinesLeft->thickness = 0.2 * maxim( 0, v - 200.0 ) / 200.0;
+	//condensationLinesLeft->visible = v > 200;
+	this->linesobj->visible = v > 200;
+	//condensationLinesLeft->thickness = 1.0 * maxim( 0, v - 200.0 ) / 200.0;
 
-	condensationLinesRight->trailPoints[ 0 ].set( 6.5, - 0.21, 4.62 );
-	velObj = spaceshipObject->pose->matrix.vector3FreeXMatrix4Inverse( &velocity );
-	condensationLinesRight->trailPoints[ 1 ].set( 6.5 + velObj.x * 0.025, - 0.21 + velObj.y * 0.025, 25 );
-	condensationLinesRight->visible = condensationLinesLeft->visible;
-	condensationLinesRight->thickness = condensationLinesLeft->thickness;
+	//condensationLinesRight->trailPoints[ 0 ].set( 6.5, - 0.21, 4.62 );
+	//velObj = spaceshipObject->pose->matrix.vector3FreeXMatrix4Inverse( &velocity );
+	//condensationLinesRight->trailPoints[ 1 ].set( 6.5 + velObj.x * 0.025, - 0.21 + velObj.y * 0.025, 25 );
+	//condensationLinesRight->visible = condensationLinesLeft->visible;
+	//condensationLinesRight->thickness = condensationLinesLeft->thickness;
 
 	// Update exhaust
 

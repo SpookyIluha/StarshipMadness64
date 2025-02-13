@@ -33,7 +33,7 @@ CondensationLines::~CondensationLines(){
 void CondensationLines::render( Camera *camera ) {
 
 	if ( ! visible ) return;
-
+/*
 	setupRender( camera );
 
 	Vector3 p0, p1, p2, p3;
@@ -72,7 +72,7 @@ void CondensationLines::render( Camera *camera ) {
 	glEnd();
 
 	finishRender();
-
+*/
 }
 
 void CondensationLines::setupRender( Camera *camera ) {

@@ -66,7 +66,7 @@ bool BannerActuator::init( float dt, float time, std::string &error ) {
 	waveTextObject = objectUtils.createObject( SPACESHIP_MADNESS_DIR + std::string( "stls/wave.stl" ), material1, 100.0, digitPosition, error, new BannerMesh() );
 	if ( ! waveTextObject ) return false;
 	waveTextObject->visible = false;
-	waveTextObject->pose->scale = 2;
+	waveTextObject->pose->scale = 1;
 	((Phase *)game)->scene->objects.push_back( waveTextObject );
 
 	gameOverTextObject = objectUtils.createObject( SPACESHIP_MADNESS_DIR + std::string( "stls/gameover.stl" ), material2, 100.0, bannerPosition, error, new BannerMesh() );

@@ -458,7 +458,7 @@ SpaceGamePhase *SpaceGameSimulation::createPhase( int32_t index ) {
 			phase = new Phase1();
 			break;
 		case 4:
-			phase = new Phase2();
+			phase = new Phase2(); 
 			break;
 		case 5:
 			phase = new Phase4();
