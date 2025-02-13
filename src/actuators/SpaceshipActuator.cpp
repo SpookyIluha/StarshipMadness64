@@ -454,6 +454,7 @@ void SpaceshipActuator::actuate( float dt, float time ) {
 		}
 		else {
 			laserobj->visible = false;
+			laser1->visible = false;
 			parameters.energy = 0;
 		}
 
@@ -464,11 +465,13 @@ void SpaceshipActuator::actuate( float dt, float time ) {
 		}
 		else {
 			laserobj->visible = false;
+			laser2->visible = false;
 			parameters.energy = 0;
 		}
 
 	} else {
-
+		laser1->visible = false;
+		laser2->visible = false;
 		laserobj->visible = false;
 		laserobj->visible = false;
 
