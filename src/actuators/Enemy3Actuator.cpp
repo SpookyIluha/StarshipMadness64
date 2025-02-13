@@ -43,7 +43,7 @@ bool Enemy3Actuator::init( float dt, float time, std::string &error ) {
 	GL1Material *rodMaterial = new GL1Material();
 	rodMaterial->diffuse.set( 0.8, 0.5, 0.0 );
 	rodMaterial->minZ = 3;
-	rodMaterial->maxZ = 800;
+	rodMaterial->maxZ = 700;
 	rodMaterial->depthTest = true;
 	//rodMaterial->specular.set( 0.0, 0.0, 0.0 );
 
@@ -77,7 +77,7 @@ bool Enemy3Actuator::init( float dt, float time, std::string &error ) {
 
 		GL1Material *ballMaterial = new GL1Material();
 		ballMaterial->diffuse.set( 0.0, 1.0, 1.0 );
-		ballMaterial->minZ = 15;
+		ballMaterial->minZ = 35;
 		ballMaterial->maxZ = 800;
 		//ballMaterial->specular.set( 0.0, 0.0, 0.0 );
 
