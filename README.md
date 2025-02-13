@@ -47,6 +47,8 @@ Tested on Ares and real hardware. ```.z64``` image can be obtained in releases.
 
 ![screenshot1](https://github.com/user-attachments/assets/6f814248-c631-436e-a257-8ef0542168d2)
 ![screenshot2](https://github.com/user-attachments/assets/83bb90aa-d378-45a4-bf83-d04d825e7949)
-
+![StarshipMadness64 2025-02-13 22-36-56](https://github.com/user-attachments/assets/afcfab37-92a2-48c9-bf0c-f9acd4e7453a)
+![StarshipMadness64 2025-02-13 23-42-36](https://github.com/user-attachments/assets/bbc5342e-7a28-404f-8028-b42ebdcf4dd3)
+![StarshipMadness64 2025-02-13 23-44-50](https://github.com/user-attachments/assets/45cd2bcb-2582-4c87-8a58-427925688748)
 
 
