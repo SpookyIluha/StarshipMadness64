@@ -28,4 +28,8 @@ double getTime();
 
 void sleepNanos( int32_t nanos );
 
+void addRumble( float sec );
+
+void updateRumble();
+
 }

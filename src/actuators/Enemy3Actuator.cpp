@@ -24,6 +24,7 @@
 #include "fixedPipeline/gl1/GL1Pipeline.h"
 
 #include "console/console.h"
+#include "time/time.h"
 
 using namespace ceres;
 
@@ -222,6 +223,7 @@ void Enemy3Actuator::actuate( float dt, float time ) {
 							ball->object->visible = false;
 							numBallsDead ++;
 							spaceshipActuator->parameters.score += 2500;
+							addRumble(3.0f);
 						} else {
 							float a = ball->health;
 							ball->object->material->emission.set( 1 - a, a, a );
@@ -239,6 +241,7 @@ void Enemy3Actuator::actuate( float dt, float time ) {
 							ball->object->visible = false;
 							numBallsDead ++;
 							spaceshipActuator->parameters.score += 2500;
+							addRumble(3.0f);
 						} else {
 							float a = ball->health;
 							ball->object->material->emission.set( 1 - a, a, a );
@@ -265,6 +268,7 @@ void Enemy3Actuator::actuate( float dt, float time ) {
 				bodyObject->material->doubleSided = true;
 
 				spaceshipActuator->parameters.score += 2500;
+				addRumble(3.0f);
 
 			}
 		}

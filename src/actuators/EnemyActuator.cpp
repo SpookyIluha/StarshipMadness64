@@ -24,6 +24,7 @@
 #include "../actuators/BulletActuator.h"
 
 #include "console/console.h"
+#include "time/time.h"
 
 using namespace ceres;
 
@@ -249,6 +250,7 @@ void EnemyActuator::receiveHit( float amount, float dt, float time ) {
 			}
 
 			spaceshipActuator->parameters.score += 500;
+			addRumble(1.0f);
 
 		}
 

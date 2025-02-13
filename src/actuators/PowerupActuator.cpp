@@ -24,6 +24,7 @@
 #include "game/Phase.h"
 #include "../SpaceGamePhase.h"
 #include "console/console.h"
+#include "time/time.h"
 
 using namespace ceres;
 
@@ -122,6 +123,7 @@ void PowerupActuator::actuate( float dt, float time ) {
 			}
 
 			spaceshipActuator->parameters.score += 1000;
+			addRumble(1.5f);
 
 			phase1->allowCreatePowerup = true;
 			phase1->actuatorsToBeDeleted.push_back( this );

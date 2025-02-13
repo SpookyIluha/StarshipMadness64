@@ -25,6 +25,7 @@
 
 namespace ceres {
 
+    float rumbleTime = 0;
 
     double getTime() {
 
@@ -42,6 +43,14 @@ namespace ceres {
         kthread_sleep(t);
     
     }
+
+    void addRumble(float sec){
+        rumbleTime = getTime() + sec;
+    }
     
+    void updateRumble(){
+        float time = getTime();
+        joypad_set_rumble_active(JOYPAD_PORT_1, time < rumbleTime? true : false);
+    }
 
 }

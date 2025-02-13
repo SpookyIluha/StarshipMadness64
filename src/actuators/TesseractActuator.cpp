@@ -27,6 +27,7 @@
 #include "fixedPipeline/gl1/GL1ObjectUtils.h"
 
 #include "console/console.h"
+#include "time/time.h"
 
 using namespace ceres;
 
@@ -166,6 +167,7 @@ void TesseractActuator::actuate( float dt, float time ) {
 							println( "Could not play bigExplosion" );
 						}
 						spaceshipActuator->parameters.score += 5000;
+						addRumble(5.0f);
 						coreBallHealth = 0;
 						isDestroying = true;
 						timeToDestroy = time + 3;
@@ -186,6 +188,7 @@ void TesseractActuator::actuate( float dt, float time ) {
 							println( "Could not play bigExplosion" );
 						}
 						spaceshipActuator->parameters.score += 5000;
+						addRumble(5.0f);
 						coreBallHealth = 0;
 						isDestroying = true;
 						timeToDestroy = time + 3;

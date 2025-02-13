@@ -28,6 +28,8 @@
 
 #include "../SpaceshipMadnessConfig.h"
 
+#include "time/time.h"
+
 using namespace ceres;
 
 SpaceshipActuator::SpaceshipActuator() {
@@ -374,11 +376,14 @@ void SpaceshipActuator::actuate( float dt, float time ) {
 
 	if ( hasBeenHit ) {
 		velocity.y -= 9.8 * dt;
-		if ( time > timeOfHit + 5.0 ) {
+		if ( time > timeOfHit + 3.0 ) {
 			spaceshipObject->visible = false;
 		} else {
 			Group *g = (Group *)spaceshipObject;
-			for ( int32_t i = 0, n = g->objects.size(); i < n; i ++ ) {
+			addRumble(1.0f);
+			laserobj->visible = false;
+			linesobj->visible = false;
+			for ( int32_t i = 0, n = g->objects.size() - 2; i < n; i ++ ) {
 				SpaceGamePhase::explodeMeshRandomly( g->objects[ i ]->mesh, 0.03, dt * 0.4 );
 			}
 		}
@@ -451,7 +456,7 @@ void SpaceshipActuator::actuate( float dt, float time ) {
 			if(!laserobj->visible){
 				if ( ! ((SpaceGamePhase *)game)->sound->playAudio( std::string( "laser" ), 0.6 ) ) {
 					println( "Could not play laser" );
-				}
+				} else addRumble(0.3f);
 			}
 			updateLaser( laser1, false );
 			laserobj->visible = true;

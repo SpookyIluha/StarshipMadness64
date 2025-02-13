@@ -88,6 +88,8 @@ int main( int argc, char **argv ) {
 		float dt = t - t0;
 		t0 = t;
 
+        updateRumble();
+
         Simulation::SimulationStepResult result = simulation->timestep( dt, t );
 
 		if ( result == Simulation::SIM_TERMINATE ) break;
@@ -106,6 +108,7 @@ int main( int argc, char **argv ) {
     audio_close();
     mixer_close();
 
+    joypad_set_rumble_active(JOYPAD_PORT_1, false);
     unregister_VI_handler((void(*)())rand);
     display_close();
     return 0;
