@@ -26,17 +26,13 @@ Pose::Pose() {
 	position = Vector3();
 	rotation = Quaternion();
 	matrix = Matrix4();
-	scale = false;
+	scale = 1;
 }
 
 Pose::~Pose() {}
 
-Vector3 two = Vector3(2,2,2);
-Vector3 one = Vector3(1,1,1);
-
 void Pose::updateMatrix() {
-
+	Vector3 scalevec = Vector3(scale,scale,scale);
 	matrix.setRotationFromQuaternion( &rotation )->setTraslation( &position );
-	matrix.scale(scale? &two : &one);
-
+	matrix.scale(&scalevec);
 }

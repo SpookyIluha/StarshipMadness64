@@ -94,6 +94,7 @@ public:
 	GL1Mesh *hull = NULL;
 	Camera *camera;
 
+	Object3D* laserobj;
 	Laser *laser1;
 	LaserCollisionable *laserCol1;
 	Laser *laser2;

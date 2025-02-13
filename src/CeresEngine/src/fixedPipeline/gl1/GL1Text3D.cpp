@@ -98,8 +98,8 @@ void GL1Text3D::render( Camera *camera ) {
 	rdpq_fontstyle_t style;
 	style.outline_color = RGBA32(0,0,0,255);
 	style.color = RGBA32((uint8_t)(this->material->diffuse.r * 255), (uint8_t)(this->material->diffuse.g * 255), (uint8_t)(this->material->diffuse.b * 255), 255);
-	rdpq_font_style(pose->scale? font->RDPQfontLarge : font->RDPQfontSmall, 0, &style);
-	rdpq_text_print(NULL, pose->scale? 2 : 3, textpos.x + 0, textpos.y + 0, currentContentString.c_str());
+	rdpq_font_style(pose->scale > 1.5? font->RDPQfontLarge : font->RDPQfontSmall, 0, &style);
+	rdpq_text_print(NULL, pose->scale > 1.5? 2 : 3, textpos.x + 0, textpos.y + 0, currentContentString.c_str());
 
 	gl_context_begin();
 /*

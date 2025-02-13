@@ -101,6 +101,19 @@ bool Phase1::initPhase( std::string &error ) {
 	BoxCollisionable *boxCol = new BoxCollisionable();
 	collisionables[ "buildings" ] = boxCol;
 
+	Vector3 posarr[50];
+	
+	for ( int32_t i = 0; i < 50; i ++ ){
+		bool faraway = false;
+		while(!faraway){
+			posarr[i].set( ( frand() - 0.5 ) * citySize, 0, ( frand() - 0.5 ) * citySize );
+			faraway = true;
+			for(int j = 0; j < i; j++){
+				if(posarr[i].distanceTo(&posarr[j]) < 130) faraway = false;
+			}
+		}
+	}
+
 	for ( int32_t i = 0, n = 50; i < n; i ++ ) {
 
 		GL1Parallelepiped *paralellepiped = new GL1Parallelepiped();
@@ -108,8 +121,7 @@ bool Phase1::initPhase( std::string &error ) {
 		paralellepiped->material = boxMaterial;
 		paralellepiped->radius = 20.0;
 		paralellepiped->material->texture = NULL;
-		Vector3 pos;
-		pos.set( ( frand() - 0.5 ) * citySize, 0, ( frand() - 0.5 ) * citySize );
+		Vector3 pos = posarr[i];
 		Vector3 p0( - frand() * 40 - 10, 0, - frand() * 40 - 10 );
 		Vector3 p1( frand() * 40 + 10, frand() * 200 + 40, frand() * 40 + 10 );
 		p0.inc( &pos );

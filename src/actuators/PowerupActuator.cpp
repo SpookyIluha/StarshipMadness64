@@ -65,6 +65,7 @@ bool PowerupActuator::init( float dt, float time, std::string &error ) {
 	//powerupMaterial->specular.set( 0.0, 0.0, 0.0 );
 	powerupMaterial->minZ = 15;
 	powerupMaterial->maxZ = 800;
+	powerupMaterial->doubleSided = false;
 	Vector3 pos( 0, 0, 0 );
 	object = objectUtils.createObject( path, powerupMaterial, 40.0, pos, error, new GL1Mesh(), 8.0 );
 	if ( ! object ) {

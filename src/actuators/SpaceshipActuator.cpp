@@ -112,7 +112,7 @@ bool SpaceshipActuator::init( float dt, float time, std::string &error ) {
 	radar = new Radar();
 	radar->pose = new Pose();
 	radar->pose->position.set( 8.7, 8.5, - 20 );
-	radar->pose->scale = true;
+	radar->pose->scale = 2;
 	Vector3 axis( 1, 0, 0 );
 	axis.normalize();
 	radar->pose->rotation.setFromAxisAngle( &axis, M_PI * 0.25 );
@@ -443,23 +443,34 @@ void SpaceshipActuator::actuate( float dt, float time ) {
 	if ( ! hasBeenHit && controller->z ) {
 
 		parameters.energy -= dt * 0.15 * 0.5;
-		if ( parameters.energy >= 0 ) updateLaser( laser1, false );
+		if ( parameters.energy >= 0 ) {
+			if(!laserobj->visible){
+				if ( ! ((SpaceGamePhase *)game)->sound->playAudio( std::string( "laser" ), 0.6 ) ) {
+					println( "Could not play laser" );
+				}
+			}
+			updateLaser( laser1, false );
+			laserobj->visible = true;
+		}
 		else {
-			laser1->visible = false;
+			laserobj->visible = false;
 			parameters.energy = 0;
 		}
 
 		parameters.energy -= dt * 0.15 * 0.5;
-		if ( parameters.energy >= 0 ) updateLaser( laser2, true );
+		if ( parameters.energy >= 0 ) {
+			updateLaser( laser2, true );
+			laserobj->visible = true;
+		}
 		else {
-			laser2->visible = false;
+			laserobj->visible = false;
 			parameters.energy = 0;
 		}
 
 	} else {
 
-		laser1->visible = false;
-		laser2->visible = false;
+		laserobj->visible = false;
+		laserobj->visible = false;
 
 	}
 
@@ -567,11 +578,6 @@ void SpaceshipActuator::actuate( float dt, float time ) {
 
 void SpaceshipActuator::updateLaser( Laser *laser, bool isLeftLaser ) {
 
-	if ( ! laser->visible ) {
-		if ( ! ((SpaceGamePhase *)game)->sound->playAudio( std::string( "laser" ), 0.6 ) ) {
-			println( "Could not play laser" );
-		}
-	}
 	Vector3 pos( isLeftLaser ? - 2.46 : 2.46, 0, - 0.25 );
 	Vector3 dir( 0, 0, - 1000 );
 	Vector3 dirvis( 0, 0, - 100 );

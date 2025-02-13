@@ -54,7 +54,7 @@ GL1Mesh *GL1ObjectUtils::createObject(
 
 	if ( smoothNormals ) {
 		Mesh *mergedMesh = mesh->mergeVertices();
-		//delete mesh;
+		delete mesh;
 		mesh = mergedMesh;
 		mesh->computeVertexNormals();
 	}

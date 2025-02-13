@@ -66,13 +66,13 @@ bool BannerActuator::init( float dt, float time, std::string &error ) {
 	waveTextObject = objectUtils.createObject( SPACESHIP_MADNESS_DIR + std::string( "stls/wave.stl" ), material1, 100.0, digitPosition, error, new BannerMesh() );
 	if ( ! waveTextObject ) return false;
 	waveTextObject->visible = false;
-	waveTextObject->pose->scale = true;
+	waveTextObject->pose->scale = 2;
 	((Phase *)game)->scene->objects.push_back( waveTextObject );
 
 	gameOverTextObject = objectUtils.createObject( SPACESHIP_MADNESS_DIR + std::string( "stls/gameover.stl" ), material2, 100.0, bannerPosition, error, new BannerMesh() );
 	if ( ! gameOverTextObject ) return false;
 	gameOverTextObject->visible = false;
-	gameOverTextObject->pose->scale = true;
+	gameOverTextObject->pose->scale = 2;
 	((Phase *)game)->scene->objects.push_back( gameOverTextObject );
 
 	for ( int digit = 0; digit < 10; digit ++ ) {
@@ -86,7 +86,7 @@ bool BannerActuator::init( float dt, float time, std::string &error ) {
 		}
 		digitsTextObjects[ digit ] = digitObject;
 		digitObject->visible = false;
-		digitObject->pose->scale = true;
+		digitObject->pose->scale = 2;
 		((Phase *)game)->scene->objects.push_back( digitObject );
 	}
 
@@ -102,7 +102,7 @@ bool BannerActuator::init( float dt, float time, std::string &error ) {
 	bonusText = new GL1Text3DScreen();
 	bonusText->pose = new Pose();
 	bonusText->pose->position.set( 55, 380, -4 );
-	bonusText->pose->scale = true;
+	bonusText->pose->scale = 2;
 	bonusText->pose->updateMatrix();
 	bonusText->init( ((SpaceGamePhase *)game)->font1, titleMaterial, Vector3( 1.25, 1.25, 1 ) );
 	bonusText->setString( "Time bonus: " );
@@ -135,6 +135,7 @@ bool BannerActuator::init( float dt, float time, std::string &error ) {
 	if ( ! welldoneText ) return false;
 	welldoneText->visible = false;
 	welldoneText->mesh->center();
+	welldoneText->pose->scale = 0.75f;
 	((Phase *)game)->scene->objects.push_back( welldoneText );
 
 	((Phase *)game)->actuatorsToBeAdded.push_back( this );

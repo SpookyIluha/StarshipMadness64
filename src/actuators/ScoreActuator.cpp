@@ -50,8 +50,8 @@ bool ScoreActuator::init( float dt, float time, std::string &error ) {
 
 	scoreText = new GL1Text3DScreen();
 	scoreText->pose = new Pose();
-	scoreText->pose->position.set( 55, 100, - 15 );
-	scoreText->pose->scale = false;
+	scoreText->pose->position.set( 55, 130, - 15 );
+	scoreText->pose->scale = 2;
 	scoreText->pose->updateMatrix();
 	scoreText->init( phase1->font1, material1, Vector3( 1.2, 1.2, 1 ) );
 	scoreText->setString( "0" );

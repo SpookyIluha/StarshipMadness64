@@ -35,7 +35,7 @@ Laser::~Laser(){
 void Laser::render( Camera *camera ) {
 
 	if ( ! visible ) return;
-
+/*
 	setupRender( camera );
 
 	Matrix4 *m = &camera->poseMatrixInverse;
@@ -86,7 +86,7 @@ void Laser::render( Camera *camera ) {
 
 	glEnd();
 
-	finishRender();
+	finishRender();*/
 
 }
 

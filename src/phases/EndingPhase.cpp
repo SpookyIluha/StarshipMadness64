@@ -48,7 +48,6 @@ EndingPhase::~EndingPhase() {
 bool EndingPhase::initPhase( std::string &error ) {
 
 	numWaves = 0;
-
 	backgroundColor.set( 0, 0, 0, 0 );
 
 	// Camera

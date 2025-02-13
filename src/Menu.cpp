@@ -179,7 +179,7 @@ bool Menu::createMenus( FPFont *font, Sound *sound ) {
 			text->pose = new Pose();
 			text->pose->position.set( 60, 120 + j * 70, - 10 );
 			text->pose->updateMatrix();
-			text->pose->scale = true;
+			text->pose->scale = 2;
 			text->init( font, textMaterial, Vector3( 1, 1, 1 ) );
 			text->setString( entry->text );
 			objects.push_back( text );

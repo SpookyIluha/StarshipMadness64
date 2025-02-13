@@ -140,14 +140,18 @@ bool InstructionsPhase::initPhase( std::string &error ) {
 	if ( ! powerups[ 2 ] ) return NULL;
 	powerups[ 3 ] = createPowerup( 1, 0, 0, error );
 	if ( ! powerups[ 3 ] ) return NULL;
-	float y = - 120 + 3 * 90;
-	powerups[ 0 ]->object->pose->position.set( 200, y, - 450 );
-	y-= 90;
-	powerups[ 1 ]->object->pose->position.set( 200, y, - 450 );
-	y-= 90;
-	powerups[ 2 ]->object->pose->position.set( 200, y, - 450 );
-	y-= 90;
-	powerups[ 3 ]->object->pose->position.set( 200, y, - 450 );
+	float y = - 30 + 3 * 25;
+	powerups[ 0 ]->object->pose->position.set( 100, y, - 150 );
+	powerups[ 0 ]->object->pose->scale = 0.3f;
+	y-= 25;
+	powerups[ 1 ]->object->pose->position.set( 100, y, - 150 );
+	powerups[ 1 ]->object->pose->scale = 0.3f;
+	y-= 25;
+	powerups[ 2 ]->object->pose->position.set( 100, y, - 150 );
+	powerups[ 2 ]->object->pose->scale = 0.3f;
+	y-= 25;
+	powerups[ 3 ]->object->pose->position.set( 100, y, - 150 );
+	powerups[ 3 ]->object->pose->scale = 0.3f;
 
 	for ( int32_t i = 0; i < 4; i ++ ) {
 		powerups[ i ]->object->pose->updateMatrix();

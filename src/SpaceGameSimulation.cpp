@@ -170,13 +170,14 @@ Simulation::SimulationStepResult SpaceGameSimulation::timestep( scalar dt, scala
 	}
 
 	// Screen saver
+	bool btnpress = ( state.stick_x > 30 || state.stick_y > 30 || state.btn.b || state.btn.d_up || state.btn.d_down || state.btn.c_up || state.btn.c_down || state.btn.c_left || state.btn.d_left || state.btn.c_right || state.btn.d_right || state.btn.z || state.btn.l || state.btn.r || state.btn.start);
 	if ( screenSaver ) {
-		if ( controller.start ) {
+		if ( ( btnpress) ) {
 			screenSaver = false;
 			timeLastKeypress = elapsedRealTime;
 		}
 	} else {
-		if ( ! (state.btn.a || state.btn.b || state.btn.z || state.btn.l || state.btn.r || state.btn.start)) {
+		if ( ! ( btnpress)) {
 			if ( elapsedRealTime > timeLastKeypress + 300 ) screenSaver = true;
 		} else timeLastKeypress = elapsedRealTime;
 	}

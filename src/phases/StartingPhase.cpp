@@ -90,7 +90,7 @@ bool StartingPhase::initPhase( std::string &error ) {
 	titleObject->pose = new Pose();
 	titleObject->pose->position.set( 30, 280, 0 );//->inc( &camera->pose->position );
 	titleObject->pose->updateMatrix();
-	titleObject->pose->scale = true;
+	titleObject->pose->scale = 2;
 	titleObject->init( font1, titleMaterial, Vector3( 1.75, 1.75, 1 ) );
 	titleObject->setString( "Starship Madness" );
 	scene->objects.push_back( titleObject );

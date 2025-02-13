@@ -121,8 +121,8 @@ void Tesseract::render( Camera *camera ) {
 	if ( ! visible ) return;
 
 	setupRender( camera );
-	if(!block){
-		rspq_block_begin();
+	//if(!block){
+	//	rspq_block_begin();
 		for ( int32_t j = 0, n = links.size(); j < n; j ++ ) {
 
 			Link *link = &links[ j ];
@@ -202,8 +202,8 @@ void Tesseract::render( Camera *camera ) {
 			}
 	
 		}
-		block = rspq_block_end();
-	} rspq_block_run(block);
+	//	block = rspq_block_end();
+	//} rspq_block_run(block);
 	
 
 	finishRender();
