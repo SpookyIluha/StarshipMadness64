@@ -63,7 +63,8 @@ SpaceshipActuator *SpaceGamePhase::createSpaceship( bool addActuator, std::strin
 	// Materials
 
 	GL1Material *bodyMaterial = new GL1Material();
-	bodyMaterial->diffuse.set( 0.8, 0.3, 0.05 );
+	bodyMaterial->emission.set( 0.8, 0.3, 0.05 );
+	bodyMaterial->diffuse.set( 0.6, 0.4, 0.05 );
 	bodyMaterial->minZ = 4.0f;
 	bodyMaterial->maxZ = 500.0f;
 	bodyMaterial->depthTest = true;
@@ -71,6 +72,7 @@ SpaceshipActuator *SpaceGamePhase::createSpaceship( bool addActuator, std::strin
 	//bodyMaterial->specularExponent = 0.01;
 
 	GL1Material *bodyWhiteMaterial = new GL1Material();
+	bodyWhiteMaterial->emission.set( 0.2, 0.2, 0.2 );
 	bodyWhiteMaterial->diffuse.set( 0.8, 0.8, 0.8 );
 	bodyWhiteMaterial->minZ = 4.0f;
 	bodyWhiteMaterial->maxZ = 500.0f;
@@ -87,7 +89,8 @@ SpaceshipActuator *SpaceGamePhase::createSpaceship( bool addActuator, std::strin
 	//engineMaterial->specularExponent = 0.01;
 
 	GL1Material *glassMaterial = new GL1Material();
-	glassMaterial->diffuse.set( 0.01, 0, 0.1 );
+	glassMaterial->diffuse.set( 0.2, 0, 0.5 );
+	glassMaterial->diffuse.set( 0.2, 0, 0.5 );
 	glassMaterial->minZ = 4.0f;
 	glassMaterial->maxZ = 500.0f;
 	glassMaterial->depthTest = true;
