@@ -17,10 +17,22 @@
  *    Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA
  */
 
-#include "Tesseract.h"
-
 #include <GL/gl.h>
 #include "console/console.h"
+
+#include "math3d/Group.h"
+
+#include "fixedPipeline/gl1/GL1ObjectUtils.h"
+#include "fixedPipeline/gl1/GL1Mesh.h"
+#include "fixedPipeline/gl1/GL1Material.h"
+#include "fixedPipeline/gl1/GL1Scene.h"
+
+#include "game/collision/BoxCollisionable.h"
+#include "game/collision/RadiusCollisionable.h"
+
+#include "../SpaceshipMadnessConfig.h"
+
+#include "Tesseract.h"
 
 using namespace ceres;
 
@@ -94,11 +106,29 @@ Tesseract::Tesseract() :
 	links.push_back( Link( 10, 14 ) );
 	links.push_back( Link( 11, 15 ) );
 
+	tesframe = 0;
+
+	/*GL1ObjectUtils objectUtils;
+
+	GL1Material *bodyWhiteMaterial = new GL1Material();
+	bodyWhiteMaterial->diffuse.set( 0.8, 0.8, 0.8 );
+	bodyWhiteMaterial->minZ = 15.0f;
+	bodyWhiteMaterial->maxZ = 800.0f;
+	bodyWhiteMaterial->depthTest = true;
+
+	Vector3 pos;
+	std::string error;*/
+
+	//tesseractmesh = objectUtils.createObject( SPACESHIP_MADNESS_DIR + std::string( "stls/tesseract.stl" ), bodyWhiteMaterial, 10.0, pos, error, new GL1Mesh(), 1.0, true );
+
+	//assertf(tesseractmesh, "Could not load tesseract.stl");
 }
 
 Tesseract::~Tesseract(){
+	rspq_wait();
 	if(block) rspq_block_free(block);
 	block = NULL;
+	//if(tesseractmesh) delete tesseractmesh;
 }
 
 void Tesseract::transformPoints() {
@@ -121,8 +151,10 @@ void Tesseract::render( Camera *camera ) {
 	if ( ! visible ) return;
 
 	setupRender( camera );
-	//if(!block){
-	//	rspq_block_begin();
+	//tesseractmesh->render(camera);
+	
+	if(!block){
+		if(tesframe > 3) rspq_block_begin();
 		for ( int32_t j = 0, n = links.size(); j < n; j ++ ) {
 
 			Link *link = &links[ j ];
@@ -130,7 +162,7 @@ void Tesseract::render( Camera *camera ) {
 			Vector3 p0 = &rotatedPoints[ link->point0 ];
 			Vector3 p1 = &rotatedPoints[ link->point1 ];
 	
-			int32_t numSides = 12;
+			int32_t numSides = 8;
 			float dAngle = 2.0 * M_PI / numSides;
 			float angle = 0;
 			Vector3 v0, v1, v2, v3;
@@ -202,12 +234,12 @@ void Tesseract::render( Camera *camera ) {
 			}
 	
 		}
-	//	block = rspq_block_end();
-	//} rspq_block_run(block);
+		if(tesframe > 3 && block == NULL) block = rspq_block_end();
+	} if(tesframe > 3 && block != NULL) rspq_block_run(block);
 	
 
 	finishRender();
-
+	tesframe++;
 }
 
 void Tesseract::setupRender( Camera *camera ) {

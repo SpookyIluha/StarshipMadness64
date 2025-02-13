@@ -45,12 +45,14 @@ bool TesseractActuator::init( float dt, float time, std::string &error ) {
 	GL1Material *tesseractMaterial = new GL1Material();
 	tesseractMaterial->diffuse.set( 0.8, 0.8, 0.8 );
 	//tesseractMaterial->specular.set( 0.0, 0.0, 0.0 );
-	tesseractMaterial->doubleSided = true;
+	tesseractMaterial->doubleSided = false;
 	tesseractMaterial->minZ = 15;
-	tesseractMaterial->maxZ = 500;
+	tesseractMaterial->maxZ = 400;
 
 	GL1Material *coreMaterial = new GL1Material();
 	coreMaterial->diffuse.set( 0, 0.5, 0.8 );
+	coreMaterial->minZ = 15;
+	coreMaterial->maxZ = 400;
 	//coreMaterial->specular.set( 0.0, 0.0, 0.0 );
 
 	tesseractObject = new Tesseract();
@@ -60,7 +62,8 @@ bool TesseractActuator::init( float dt, float time, std::string &error ) {
 	tesseractObject->pose->updateMatrix();
 	for ( int32_t i = 0, n = tesseractObject->points.size(); i < n; i ++ ) tesseractObject->points[ i ].multiplyScalar( 125 );
 	tesseractObject->size = 125;
-
+	tesseractObject->tesframe = 0;
+	tesseractObject->block = NULL;
 
 	GL1ObjectUtils objectUtils;
 	Vector3 corePos( 125, 125, 125 );
@@ -88,7 +91,7 @@ bool TesseractActuator::init( float dt, float time, std::string &error ) {
 void TesseractActuator::actuate( float dt, float time ) {
 
 	if ( isDestroying ) {
-
+		//debugf("Tesseract: %.2f > %.2f\n", time, timeToDestroy);
 		// Destruction
 		if ( time > timeToDestroy ) {
 			tesseractCoreObject->visible = false;
@@ -100,11 +103,11 @@ void TesseractActuator::actuate( float dt, float time ) {
 	// Transform points
 	Vector3 axis( 0.123, 1.234, 3.456 );
 	axis.normalize();
-	tesseractObject->pose0.position.set( 100 * sin( time * 0.5 ), 0, 100 * cos( time * 0.5 ) );
-	tesseractObject->pose0.rotation.setFromAxisAngle( &axis, time * 0.3 );
+	tesseractObject->pose0.position.set( 100 * sin( 0 * 0.5 ), 0, 100 * cos( 0 * 0.5 ) );
+	tesseractObject->pose0.rotation.setFromAxisAngle( &axis, 0 * 0.3 );
 	tesseractObject->pose0.updateMatrix();
-	tesseractObject->pose1.position.set( sin( time * 0.5 + 1 ), 0, cos( time * 0.5 + 1 ) );
-	tesseractObject->pose1.rotation.setFromAxisAngle( &axis, time * 0.3 );
+	tesseractObject->pose1.position.set( sin( 0 * 0.5 + 1 ), 0, cos( 0 * 0.5 + 1 ) );
+	tesseractObject->pose1.rotation.setFromAxisAngle( &axis, 0 * 0.3 );
 	tesseractObject->pose1.updateMatrix();
 
 	tesseractObject->transformPoints();
@@ -155,7 +158,7 @@ void TesseractActuator::actuate( float dt, float time ) {
 
 		float prevHealth = coreBallHealth;
 		if ( laser1 ) {
-			if ( laser1->intersectsSphere( &tesseractCoreObject->pose->position, 25.0 ) ) {
+			if ( laser1->intersectsSphere( &tesseractCoreObject->pose->position, 25.0 ) && spaceshipActuator->laser1->visible ) {
 				coreBallHealth -= dt * 0.15;
 				if ( coreBallHealth <= 0 ) {
 					if ( prevHealth > 0 ) {
@@ -163,11 +166,11 @@ void TesseractActuator::actuate( float dt, float time ) {
 							println( "Could not play bigExplosion" );
 						}
 						spaceshipActuator->parameters.score += 5000;
+						coreBallHealth = 0;
+						isDestroying = true;
+						timeToDestroy = time + 3;
+						name = "x";
 					}
-					coreBallHealth = 0;
-					isDestroying = true;
-					timeToDestroy = time + 3;
-					name = "x";
 				} else {
 					float a = coreBallHealth;
 					tesseractCoreObject->material->emission.set( 1 - a, a, a );
@@ -183,11 +186,11 @@ void TesseractActuator::actuate( float dt, float time ) {
 							println( "Could not play bigExplosion" );
 						}
 						spaceshipActuator->parameters.score += 5000;
+						coreBallHealth = 0;
+						isDestroying = true;
+						timeToDestroy = time + 3;
+						name = "x";
 					}
-					coreBallHealth = 0;
-					isDestroying = true;
-					timeToDestroy = time + 3;
-					name = "x";
 				} else {
 					float a = coreBallHealth;
 					tesseractCoreObject->material->emission.set( 1 - a, a, a );

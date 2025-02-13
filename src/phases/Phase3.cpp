@@ -49,7 +49,7 @@ bool Phase3::initPhase( std::string &error ) {
 
 	canPause = true;
 
-	numWaves = 3;
+	numWaves = 1;
 
 	nextTimeCreatePowerup = 0.0;
 	allowCreatePowerup = true;

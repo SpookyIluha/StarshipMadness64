@@ -56,6 +56,10 @@ public:
 	Pose pose0;
 	Pose pose1;
 
+	int tesframe;
+
+	//GL1Mesh* tesseractmesh;
+
 	rspq_block_t* block = NULL;
 
 };
