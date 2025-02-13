@@ -11,7 +11,7 @@ This is a fork and a port of a game project from [codeberg](https://codeberg.org
     See licenses/LICENSE.KOS.txt for the full license and licenses/KOS_AUTHORS.txt
     for the copyright holders list.
 
-![boxart](https://github.com/user-attachments/assets/04d58630-5ec8-49dc-8b16-e0480bbfa864)
+![boxart](https://github.com/user-attachments/assets/1bad9ee6-bf00-414a-81a3-b2d253abf95c)
 
 # Game authors
 
@@ -41,14 +41,14 @@ This is a fork and a port of a game project from [codeberg](https://codeberg.org
 This game is written in C++ with usage of KOS on Dreamcast, std library and posix io, the 3D rendering is done with OpenGL 1.1.
 There were some changes needed to bring this game over to the N64, namely replacing KOS calls with Libdragon equivalents and the font system is replaced with Libdragon's equivalent (namely to avoid large textures that would not fit TMEM). Other than that there are small tweaks to the rendering values and rendering equasion so that the game would fit into the N64's restrictions.
 
-There are still some issues with depth precision and some functionality is not yet ported.
-
 # Running
 
 Tested on Ares and real hardware. ```.z64``` image can be obtained in releases.
 
 ![screenshot1](https://github.com/user-attachments/assets/6f814248-c631-436e-a257-8ef0542168d2)
 ![screenshot2](https://github.com/user-attachments/assets/83bb90aa-d378-45a4-bf83-d04d825e7949)
-
+![StarshipMadness64 2025-02-13 22-36-56](https://github.com/user-attachments/assets/afcfab37-92a2-48c9-bf0c-f9acd4e7453a)
+![StarshipMadness64 2025-02-13 23-42-36](https://github.com/user-attachments/assets/bbc5342e-7a28-404f-8028-b42ebdcf4dd3)
+![StarshipMadness64 2025-02-13 23-44-50](https://github.com/user-attachments/assets/45cd2bcb-2582-4c87-8a58-427925688748)
 
 
