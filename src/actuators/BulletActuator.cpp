@@ -48,7 +48,9 @@ bool BulletActuator::init( float dt, float time, std::string &error ) {
 	GL1Texture *bulletTexture = GL1Pipeline::loadTexture( SPACESHIP_MADNESS_DIR + std::string( "textures/bullet1.sprite" ), error );
 	if ( bulletTexture == NULL ) return NULL;
 	bulletMaterial->texture = bulletTexture;
-	bulletMaterial->depthTest = false;
+	bulletMaterial->depthTest = true;
+	bulletMaterial->minZ = 15;
+	bulletMaterial->maxZ = 800;
 
 	bulletObject = new Bullet();
 	bulletObject->material = bulletMaterial;
