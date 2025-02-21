@@ -270,6 +270,11 @@ Simulation::SimulationStepResult SpaceGameSimulation::timestep( scalar dt, scala
 
 	} else if ( currentPhaseIndex == 0 && controller.a && theTime > timeLastKeypress + 0.3 ) selectedPhaseIndex = 3;
 
+	// Get starship status to pass it to the next phase
+	StarshipData parameters = currentPhase->spaceshipActuator ? currentPhase->spaceshipActuator->getStarshipParameters() : StarshipData();
+	// Store Hi-sccore
+	if ( parameters.hiScore < parameters.score ) parameters.hiScore = parameters.score;
+	
 	// Phase logic
 	if ( ( currentPhase->isTerminated && elapsedRealTime > 3.0 ) || selectedPhaseIndex >= 0 ) {
 
@@ -286,15 +291,10 @@ Simulation::SimulationStepResult SpaceGameSimulation::timestep( scalar dt, scala
 
 		selectedPhaseIndex = -1;
 
-		// Get starship status to pass it to the next phase
-		StarshipData parameters = currentPhase->spaceshipActuator ? currentPhase->spaceshipActuator->getStarshipParameters() : StarshipData();
 
 		// Recharge shield and energy to max
 		parameters.shield = parameters.maxShield;
 		parameters.energy = parameters.maxEnergy;
-
-		// Store Hi-sccore
-		if ( parameters.hiScore < parameters.score ) parameters.hiScore = parameters.score;
 
 		// Terminate current phase
 		currentPhase->terminatePhase();
